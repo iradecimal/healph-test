@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
-const daily_intake = new mongoose.Schema({
+const daily_intakeSchema = new mongoose.Schema({
   uid: {
     type: mongoose.ObjectId,
     required: true
@@ -47,7 +47,4 @@ const daily_intake = new mongoose.Schema({
     default: false
   },
 });
-
-const Intake = mongoose.model("Intake", daily_intake);
-export default Intake;
-  
+module.exports = Object.freeze({Intake: daily_intakeSchema});

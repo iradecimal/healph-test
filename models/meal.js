@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const mealSchema = new mongoose.Schema({
   uid: {
@@ -37,5 +37,4 @@ const mealSchema = new mongoose.Schema({
   }
 })
 
-const Meal = mongoose.model("Meal", mealSchema);
-export default Meal;
+module.exports = Object.freeze({Meal: mealSchema});

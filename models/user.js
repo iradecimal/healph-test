@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -101,5 +101,4 @@ userSchema.virtual('age').get(function() {
     return age;
 });
 
-const User = mongoose.model("User", userSchema);
-export default User;
+module.exports = Object.freeze({User: userSchema});

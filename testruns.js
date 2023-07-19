@@ -1,6 +1,10 @@
-const mongoose = import('mongoose');
+const mongoose = require('mongoose');
+const schemas = require('./models/index.js');
 
-import {User, Intake, Meal, Report} from './models/index.js';
+const User = mongoose.model('User', schemas.User);
+const Intake = mongoose.model('Daily Intake', schemas.Intake);
+const Meal = mongoose.model('Meal', schemas.Meal);
+const Report = mongoose.model('Report', schemas.Report);
 
 //You can't apparently have a custom cast error msg by design
 function hasError(err){
@@ -70,21 +74,21 @@ var report_1 = new Report({
 
 
 //checking the input
-var user_err = user_1.validateSync();
+user_err = user_1.validateSync();
 console.log('User Validation');
-var isUserValid = hasError(user_err);
+isUserValid = hasError(user_err);
 
-var in_err = intake_1.validateSync();
+in_err = intake_1.validateSync();
 console.log('Daily Intake Validation');
-var isDTakeValid = hasError(in_err);
+isDTakeValid = hasError(in_err);
 
-var meal_err = meal_1.validateSync();
+meal_err = meal_1.validateSync();
 console.log('Meal Validation');
-var isMealValid = hasError(meal_err);
+isMealValid = hasError(meal_err);
 
-var report_err = report_1.validateSync();
+report_err = report_1.validateSync();
 console.log('Report Validation');
-var isMealValid = hasError(meal_err);
+isMealValid = hasError(meal_err);
 
 
 // console.log(user_1);
