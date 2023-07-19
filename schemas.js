@@ -70,7 +70,7 @@ const user = new Schema({
     type: Date, 
     default: Date.now
   },
-  illneses: {
+  illnesses: {
     type: [String]
   },
   allergies: {

@@ -38,7 +38,7 @@ var user_1 = new User({
     },
     uni: 'University of the Philippines Los Baños',
     deg: 'BS Computer Wizard',
-    illness: ['crippling computer addiction', 'weeb'],
+    illnesses: ['crippling computer addiction', 'weeb'],
     allergies: false,
     height: 'hello world',
     weight: 12.34
