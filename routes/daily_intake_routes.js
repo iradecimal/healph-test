@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-import IntakeController from '../controllers/daily_intake_controller.js';
+const IntakeController = require('../controllers/intake_controller.js');
 
 router.get("/new-daily-intake", IntakeController.newDailyIntake);
 router.post("/update-daily-intake/:date", IntakeController.updateDailyIntake);
