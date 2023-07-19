@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-import UserController from '../controllers/user_controller.js';
+const UserController = require('../controllers/user_controller.js');
 
 router.get("/signup", UserController.signup);
 router.get("/login", UserController.login);
