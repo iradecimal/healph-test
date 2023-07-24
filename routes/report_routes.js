@@ -6,4 +6,4 @@ router.get("/new-report", ReportController.newReport);
 router.post("/update-report/:oid", ReportController.updateReport);
 router.post("/flag-report/:oid", ReportController.flagReport);
 
-export default router;
+module.exports = router;

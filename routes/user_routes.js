@@ -15,4 +15,4 @@ router.post("/update-uni/:oid", UserController.updateUni);
 router.post("/update-degree/:oid", UserController.updateDegree);
 router.post("/update-password/:oid", UserController.updatePassword);
 
-export default router;
+module.exports = router;
