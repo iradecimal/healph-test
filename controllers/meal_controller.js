@@ -35,5 +35,7 @@ exports.getMeal = asyncHandler(async (req, res, next) => {
 });
 
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
-
+    //accept picture
+    //upload to Drive and take URL
+    //find meal and attach string to the object
 });

@@ -12,18 +12,26 @@ exports.newDailyIntake = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
+    //change to findoneandupate
+    const intake = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date) }).exec();
+
     res.send("Under Construction");
 });
 
 exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
+    const intake = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date) }).exec();
+
     res.send("Under Construction");
 });
 
 exports.getHALE = asyncHandler(async (req, res, next) => {
+    const intake = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date) }).exec();
+
     res.send("Under Construction");
 });
 
 exports.getPHD = asyncHandler(async (req, res, next) => {
+    const intake = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date) }).exec();
      
     res.send("Under Construction");
 });
