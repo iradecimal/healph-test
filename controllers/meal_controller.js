@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const Meal = require('../models/meal.js');
+const Intake = require('../models/daily_intake.js');
 
 exports.newMeal = asyncHandler(async (req, res, next) => {
     const newMeal = new Meal({
@@ -15,9 +16,14 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
         foodgroups:  req.body.foodgroups,
         })
 
-    await newMeal.save(); //get id from here to add to the intake
+    const meal = await newMeal.save(); //get id from here to add to the intake
+    console.log(meal._id);
+    
+    const intake = await Intake.findById(req.body.dailyid).exec();
 
-    //need to update daily intake as well, grab the oid from the req.body, then modify it
+    intake.dailymeals.push(meal._id);
+
+    await intake.save();
 
     res.send("Under Construction");
 });
@@ -31,7 +37,18 @@ exports.getMeal = asyncHandler(async (req, res, next) => {
         return next(err);
     }
 
-    res.send(meal.toJSON());
+    console.log(meal);
+    const mealsend = {
+        datetime: meal.datetime,
+        cal: meal.cal,
+        fat: meal.fat,
+        carbs: meal.carbs,
+        proteins: meal.proteins,
+        mealdesc: meal.mealdesc,
+        foodgroups: meal.foodgroups
+    }
+
+    res.send(mealsend);
 });
 
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
