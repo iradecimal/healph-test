@@ -10,4 +10,4 @@ const reportSchema = new Schema({
   status: { type: Boolean, default: false }
 })
 
-module.exports = mongoose.model("Intake", daily_intakeSchema);
+module.exports = mongoose.model("Report", reportSchema);

@@ -8,7 +8,7 @@ const compression = require("compression");
 const userRouter = require('./routes/user_routes.js');
 const intakeRouter = require('./routes/daily_intake_routes.js');
 const mealRouter = require('./routes/meal_routes.js');
-const reportRouter = require('./routes/meal_routes.js');
+const reportRouter = require('./routes/report_routes.js');
 const indexRouter = require('./routes/index');
 
 

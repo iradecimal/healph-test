@@ -4,7 +4,7 @@ const UserController = require('../controllers/user_controller.js');
 
 router.post("/signup", UserController.signup);
 router.post("/login", UserController.login);
-//router.post("/logout", UserController.logout);
+router.get("/logout", UserController.logout);
 //router.post("/upload-prof-pic", UserController.uploadPicture);
 router.get("/get-full-name/:oid", UserController.getFullName);
 router.get("/get-profile-picture/:oid", UserController.getProfilePicture);

@@ -5,45 +5,49 @@ const Daily_Intake =require('../models/daily_intake.js');
 //create a new empty intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
     const newDate = new Date();
-
     const newIntake = new Daily_Intake({uid: req.params.uid, date: newDate.toISOString().slice(0,10) });
-
-    await newIntake.save();
-    res.send("Under Construction");
+    
+    try{
+        await newIntake.save();
+        res.status(201).json(intake);
+    } catch {
+        res.status(400);
+    } 
 });
 
 exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
-    const query = { uid: req.params.uid, date: req.params.date};
 
-    Daily_Intake.findOne(
-        {uid: ObjectId(req.params.uid), date: req.params.date},
-        { $set:{ 
+    const intake = await Daily_Intake.findOneAndUpdate(
+        { uid: ObjectId(req.params.uid), date: req.params.date },
+        {
+          $set: {
             sleephrs: req.body.sleephrs,
             waterglass: req.body.waterglass,
             dailycal: req.body.dailcal,
             steps: req.body.steps,
             phd: req.body.phd,
             hale: req.body.hale
-        }}, function (err,docs) {
-            if (err){
-                res.send(err);
-            } else {
-                res.send("Success");
-            }
+          }
         }
-    ); 
+      ).exec();
+    
+    if (!intake) {
+        console.log("Intake was not found");
+        res.status(404).send("Intake was not found");
+    } else {
+        res.status(204).json(intake);
+    }
 });
 
 exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
     const intake = await Daily_Intake.find({ uid:req.params.uid, date: req.params.date }).exec();
     
-    if (intake === null) {
-        const err = new Error("meal not found");
-        err.status = 404;
-        return next(err);
+    if (!intake) {
+        console.log(err);
+        res.status(404).send("Intake was not found");
+    } else {
+        res.status(201).json(intake);
     }
-    
-    res.send(intake);
 });
 
 //getmealsfrom intake
@@ -51,23 +55,21 @@ exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
 exports.getHALE = asyncHandler(async (req, res, next) => {
     const HALE = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}, "hale").exec();
 
-    if (HALE === null) {
-        const err = new Error("meal not found");
-        err.status = 404;
-        return next(err);
+    if (!HALE) {
+        console.log(err);
+        res.status(404).send("Intake was not found");
+    } else {
+        res.status(200).json(HALE);
     }
-
-    res.send(HALE);
 });
 
 exports.getPHD = asyncHandler(async (req, res, next) => {
     const PHD = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}, "phd").exec();
     
-    if (PHD === null) {
-        const err = new Error("meal not found");
-        err.status = 404;
-        return next(err);
+    if (!PHD) {
+        console.log(err);
+        res.status(404).send("Intake was not found");
+    } else {
+        res.status(200).json(PHD);
     }
-
-    res.send(PHD);
 });

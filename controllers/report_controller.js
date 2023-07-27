@@ -1,34 +1,27 @@
 const express = require("express");
-const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const Report = require('../models/report.js');
 
 exports.newReport = asyncHandler(async (req, res, next) => {
     const newReport = new Report({
-        uid: req.params.uid,
-        reptype: req.params.reptype,
-        det: req.params.date 
-    })
-
-    await newReport.save();
+        uid: req.body.uid,
+        reptype: req.body.reptype,
+        det: req.body.det 
+    });
+    try {
+        await newReport.save();
+        res.status(200).send("Success");
+    } catch {
+        res.status(400).send(err);
+    }
 });
 
 exports.updateReport = asyncHandler(async (req, res, next) => {
-    Report.findByIdAndUpdate(req.params.oid, {det: req.body.det}, function (err,docs) {
-        if (err){
-            res.send(err);
-        } else {
-            res.send("Success");
-        }
-    })
+    await Report.findByIdAndUpdate(req.params.oid, {det: req.body.det});
+    res.status(200).send("Success");
 });
 
 exports.flagReport = asyncHandler(async (req, res, next) => {
-    Report.findByIdAndUpdate(req.params.oid, {status: true}, function (err,docs) {
-        if (err){
-            res.send(err);
-        } else {
-            res.send("Success");
-        }
-    })
+    await Report.findByIdAndUpdate(req.params.oid, {status: true});
+    res.status(200).send("Success");
 });
