@@ -14,27 +14,26 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
         proteins: req.body.proteins,
         mealdesc: req.body.mealdesc,
         foodgroups:  req.body.foodgroups,
-        })
+    });
+    try{
+        const meal = await newMeal.save(); //get id from here to add to the intake
 
-    const meal = await newMeal.save(); //get id from here to add to the intake
-    console.log(meal._id);
-    
-    const intake = await Intake.findById(req.body.dailyid).exec();
-
-    intake.dailymeals.push(meal._id);
-
-    await intake.save();
-
-    res.send("Under Construction");
+        const intake = await Intake.findById(req.body.dailyid).exec();
+        intake.dailymeals.push(meal._id);
+        await intake.save();
+        res.status(201).json(meal);
+    } catch {
+        console.log(err);
+        res.status(404).send("Adding meal was unsuccessful");
+    }    
 });
 
 exports.getMeal = asyncHandler(async (req, res, next) => {
     const meal = await Meal.findById(req.params.oid).exec();
 
     if (meal === null) {
-        const err = new Error("meal not found");
-        err.status = 404;
-        return next(err);
+        console.log(err);
+        res.status(404).send("Meal cannot be found");
     }
 
     console.log(meal);
@@ -48,7 +47,7 @@ exports.getMeal = asyncHandler(async (req, res, next) => {
         foodgroups: meal.foodgroups
     }
 
-    res.send(mealsend);
+    res.status(201).json(mealsend);
 });
 
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
