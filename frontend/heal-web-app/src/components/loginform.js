@@ -29,7 +29,7 @@ const LoginForm = () => {
         <Form style={{ marginBottom: "30px" }}>
           <Form.Group>
             <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Form.Control type="email" placeholder="Enter email" className='login-input' value={email} onChange={(e) => setEmail(e.target.value)} />
           </Form.Group>
 
           <Form.Group style={{ marginBottom: "10px" }}>
@@ -38,6 +38,7 @@ const LoginForm = () => {
             <InputGroup style={{width:"350px"}}>
               <Form.Control
                 type={showPassword ? 'text' : 'password'} 
+                className='login-input'
                 placeholder="Enter Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

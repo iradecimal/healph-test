@@ -41,18 +41,18 @@ const RegisterForm = () => {
 
           <Form.Group>
             <Form.Label>First Name</Form.Label>
-            <Form.Control type="text" placeholder="Enter first name" value={firstname} onChange={(e) => setFirstName(e.target.value)} />
+            <Form.Control type="text" placeholder="Enter first name" className='login-input' value={firstname} onChange={(e) => setFirstName(e.target.value)} />
           </Form.Group>
 
           <Form.Group>
             <Form.Label>Last Name</Form.Label>
-            <Form.Control type="text" placeholder="Enter last name" value={lastname} onChange={(e) => setLastName(e.target.value)} />
+            <Form.Control type="text" placeholder="Enter last name" className='login-input' value={lastname} onChange={(e) => setLastName(e.target.value)} />
           </Form.Group>
 
 
           <Form.Group>
             <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Form.Control type="email" placeholder="Enter email" className='login-input' value={email} onChange={(e) => setEmail(e.target.value)} />
           </Form.Group>
 
           <Form.Group style={{ marginBottom: "10px" }}>
@@ -61,6 +61,7 @@ const RegisterForm = () => {
               <Form.Control
                 type={showPassword ? 'text' : 'password'} 
                 placeholder="Enter Password"
+                className='login-input'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -78,6 +79,7 @@ const RegisterForm = () => {
               <Form.Control
                 type={showconfPassword ? 'text' : 'password'} 
                 placeholder="Repeat password"
+                className='login-input'
                 value={confpassword}
                 onChange={(e) => setconfPassword(e.target.value)}
               />
