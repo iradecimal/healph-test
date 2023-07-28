@@ -12,6 +12,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
         lname: req.body.lastName,
         mi: req.body.middleInitial,
         suffix: req.body.suffix,
+        sex: req.body.sex,
         bday: req.body.birthday,
         loc: req.body.location,
         uni: req.body.university,
@@ -44,12 +45,20 @@ exports.logout = asyncHandler(async (req, res, next) => {
     res.send("Under Construction");
 });
 
+exports.getUser = asyncHandler(async (req, res, next) => {
+    const query = await User.findById(req.body.oid).select(
+    'uname name sex bday loc uni deg joindate illnesses allergies weight height').exec();
+
+    
+
+});
+
 exports.getFullName = asyncHandler(async (req, res, next) => {
     const query = await User.findById(req.body.oid).select('fullName').exec();
 
     if (query === null) {
         console.log(err);
-        res.status(404).send("Meal cannot be found");
+        res.status(404).send("User cannot be found");
     }
 
     console.log(query);
@@ -87,7 +96,7 @@ exports.updateWeight = asyncHandler(async (req, res, next) => {
     res.status(200).send("Success");
 });
 
-exports.updateName = asyncHandler(async (req, res, next) => {
+exports.updateUserBio = asyncHandler(async (req, res, next) => {
     await User.findByIdAndUpdate(req.params.uid, {
         fname: req.body.firstName,
         lname: req.body.lastName,

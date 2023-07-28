@@ -1,6 +1,7 @@
 const express = require("express");
 const asyncHandler = require('express-async-handler');
 const Daily_Intake =require('../models/daily_intake.js');
+const Meal = require('../models/meal.js');
 
 //create a new empty intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
@@ -28,7 +29,7 @@ exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
             phd: req.body.phd,
             hale: req.body.hale
           }
-        }
+        }, {new: true}
       ).exec();
     
     if (!intake) {
@@ -41,12 +42,13 @@ exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
 
 exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
     const intake = await Daily_Intake.find({ uid:req.params.uid, date: req.params.date }).exec();
+    const intakeMeals = await Meal.find({ dailyid: intake._id }).exec();
     
     if (!intake) {
         console.log(err);
         res.status(404).send("Intake was not found");
     } else {
-        res.status(201).json(intake);
+        res.status(201).json({intake: intake, meals: intakeMeals});
     }
 });
 

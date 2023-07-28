@@ -16,6 +16,12 @@ exports.newReport = asyncHandler(async (req, res, next) => {
     }
 });
 
+exports.viewReport = asyncHandler(async (req, res, next) => {
+    await Report.findByIdAndUpdate(req.params.oid, {det: req.body.det});
+    res.status(200).send("Success");
+});
+
+
 exports.updateReport = asyncHandler(async (req, res, next) => {
     await Report.findByIdAndUpdate(req.params.oid, {det: req.body.det});
     res.status(200).send("Success");
@@ -24,4 +30,14 @@ exports.updateReport = asyncHandler(async (req, res, next) => {
 exports.flagReport = asyncHandler(async (req, res, next) => {
     await Report.findByIdAndUpdate(req.params.oid, {status: true});
     res.status(200).send("Success");
+});
+
+exports.findUserReport = asyncHandler(async (req, res, next) => {
+    const reports = await Report.find({uid: req.params.oid});
+    if (meal === null) {
+        console.log(err);
+        res.status(404).send("Meal cannot be found");
+    }
+
+    res.status(201).json(mealsend);
 });

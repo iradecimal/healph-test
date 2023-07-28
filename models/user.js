@@ -4,10 +4,10 @@ const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  email: { type: String, required: [true, 'Please enter an email'], 
+  email: { type: String, required: true,
       maxLength: 50, unique: [true, 'email is already taken'] },
-  pass: { type: String, required: [true, 'Please enter a password'], minLength: 8, maxLength: 24 },
-  uname: { type: String, required: [true, 'Please enter a username'], 
+  pass: { type: String, required: true, minLength: 8, maxLength: 24 },
+  uname: { type: String, required: true, 
       maxLength: 16, unique: [true, 'username is already taken'] },
   name: {
     fname: { type: String, required: true },
@@ -15,6 +15,7 @@ const userSchema = new Schema({
     mi: { type: String, default: '' },
     suffix: { type: String, default: '' }
   },
+  sex: {type: String, required: true},
   bday: { type: String, required: true, minLength: 9 ,maxLength: 11 },
   pic: { type: String },
   loc: { region: String, town: String },

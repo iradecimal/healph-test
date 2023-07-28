@@ -29,25 +29,15 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
 });
 
 exports.getMeal = asyncHandler(async (req, res, next) => {
-    const meal = await Meal.findById(req.params.oid).exec();
+    const meal = await Meal.findById(req.params.oid).select(
+    'datetime cal fat carbs proteins mealdesc foodgroups').exec();
 
     if (meal === null) {
         console.log(err);
         res.status(404).send("Meal cannot be found");
     }
 
-    console.log(meal);
-    const mealsend = {
-        datetime: meal.datetime,
-        cal: meal.cal,
-        fat: meal.fat,
-        carbs: meal.carbs,
-        proteins: meal.proteins,
-        mealdesc: meal.mealdesc,
-        foodgroups: meal.foodgroups
-    }
-
-    res.status(201).json(mealsend);
+    res.status(201).json(meal);
 });
 
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
