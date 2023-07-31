@@ -1,8 +1,9 @@
 import React from "react";
 import Sidebar from "../components/sidebar";
 import { Container, Row, Col } from "react-bootstrap";
-import DailyIntakeTable from "../components/dailyintaketable";
+import DailyIntakeTable from "../components/intakes_mealstable";
 import SearchBar from "../components/searchbar";
+import HamburgerMenu from "../components/hamburgermenu";
 
 const currentDate = new Date();
 const formattedDate = currentDate.toISOString().split('T')[0];
@@ -37,7 +38,9 @@ const Dailyintakes = () => {
 
 
   return (
-    <Container fluid>
+    <div>
+      <HamburgerMenu/>
+      <Container fluid>
       <Row>
         <Col md={2}>
           <Sidebar />
@@ -46,11 +49,12 @@ const Dailyintakes = () => {
           <div>
             <h2 style={{marginTop:"20px",marginBottom:"20px",color:"#9FC856",fontWeight:"600"}}>Daily Intakes</h2>
             <SearchBar/>
-            <DailyIntakeTable data={data} />
+            <DailyIntakeTable data={data} type={0} />
           </div>
         </Col>
       </Row>
     </Container>
+    </div>
   );
 };
 

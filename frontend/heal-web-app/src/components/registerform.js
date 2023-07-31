@@ -29,11 +29,10 @@ const RegisterForm = () => {
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center" style={{ height: "90vh" }}>
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ marginBottom: "20px",justifyContent:"center"}}>
         <img src="HEALPH.png" alt="Logo" style={{ width: "150px", height: "auto" }} />
       </div>
-
-      <Card style={{ width: '400px', padding: '20px', border: "none" }}>
+      <Card style={{ width: '400px', padding: '20px', border: "none",overflowY:"auto"}}>
         <h4 style={{ textAlign: "center",marginBottom:"40px" }}>Register</h4>
         <Form style={{ marginBottom: "30px" }}>
 

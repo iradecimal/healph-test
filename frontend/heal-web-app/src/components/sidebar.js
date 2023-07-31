@@ -1,48 +1,53 @@
 import React from "react";
-import { Nav, Image } from "react-bootstrap";
-import { FaHome, FaUtensils, FaClipboard, FaCog } from "react-icons/fa";
+import { Nav, Image, Dropdown } from "react-bootstrap";
+import { FaHome, FaUtensils, FaClipboard } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
-import './sidebar.css';
+import "./sidebar.css";
 
 const Sidebar = () => {
-  const location = useLocation(); // Get the current location from React Router
+  const location = useLocation();
 
   return (
-    <Nav className="sidebar col-md-2 flex-column d-none d-md-block">
-      <div className="image-container">
-        <Image
-          src="HEALPH.png" 
-          alt="Sidebar Logo"
-          fluid
-        />
-      </div>
-    
-      <Nav.Item>
-        <Nav.Link href="/dashboard" active={location.pathname === "/dashboard"}>
-          <FaHome className="icon" />
-          Dashboard
-        </Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link href="/dailyintakes" active={location.pathname === "/dailyintakes"}>
-          <FaUtensils className="icon" />
-          Daily Intakes
-        </Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link href="/mealviewer" active={location.pathname === "/mealviewer"}>
-          <FaClipboard className="icon" />
-          Meal Viewer
-        </Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link href="/settings" active={location.pathname === "/settings"}>
-          <FaCog className="icon" />
-          Settings
-        </Nav.Link>
-      </Nav.Item>
+    <div>
+      <Nav className="sidebar col-md-2 flex-column d-none d-md-block">
+        <div className="image-container">
+          <Image src="HEALPH.png" alt="Sidebar Logo" fluid />
+        </div>
 
-    </Nav>
+        <Nav.Item>
+          <Nav.Link href="/dashboard" active={location.pathname === "/dashboard"}>
+            <FaHome className="icon" />
+            Dashboard
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/dailyintakes" active={location.pathname === "/dailyintakes"}>
+            <FaUtensils className="icon" />
+            Daily Intakes
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/mealviewer" active={location.pathname === "/mealviewer"}>
+            <FaClipboard className="icon" />
+            Meal Viewer
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      <Dropdown drop="up" className="sidebar-dropdown col-md-2 flex-column d-none d-md-block">
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Image src="profpic.jpg" alt="Profile Picture" className="round-image" />
+          <Dropdown.Toggle variant="success" id="dropdown-basic" className="dropdown-text">
+            Nate Muncal
+          </Dropdown.Toggle>
+        </div>
+        <Dropdown.Menu>
+          <Dropdown.Item href="#action/3.1">User Settings</Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Item href="#action/3.2">Logout</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
   );
 };
 
