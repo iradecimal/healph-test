@@ -11,7 +11,6 @@ const daily_intakeSchema = new Schema({
   steps: { type: Number, min: 0, default: 0 },
   phd: { type: Number, min: 0, default: 0 },
   hale: { type: Number, min: 0, default: 0 },
-  dailymeals: [{ type: Schema.ObjectId, ref: "Meal" }],
   submit: { type: Boolean, default: false },
 });
 module.exports = mongoose.model("Intake", daily_intakeSchema);

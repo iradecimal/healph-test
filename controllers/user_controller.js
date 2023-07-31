@@ -1,5 +1,4 @@
 const express = require("express");
-const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user.js');
 
@@ -46,15 +45,19 @@ exports.logout = asyncHandler(async (req, res, next) => {
 });
 
 exports.getUser = asyncHandler(async (req, res, next) => {
-    const query = await User.findById(req.body.oid).select(
+    const user = await User.findById(req.body.uid).select(
     'uname name sex bday loc uni deg joindate illnesses allergies weight height').exec();
 
-    
+    if (user === null) {
+        console.log(err);
+        res.status(404).send("User cannot be found");
+    }
 
+    console.log(user);
 });
 
 exports.getFullName = asyncHandler(async (req, res, next) => {
-    const query = await User.findById(req.body.oid).select('fullName').exec();
+    const query = await User.findById(req.body.uid).select('fullName').exec();
 
     if (query === null) {
         console.log(err);
@@ -65,7 +68,7 @@ exports.getFullName = asyncHandler(async (req, res, next) => {
 });
 
 exports.getProfilePicture = asyncHandler(async (req, res, next) => {
-    const query = await User.findById(req.body.oid).select('pic').exec();
+    const query = await User.findById(req.body.uid).select('pic').exec();
 
     if (query === null) {
         console.log(err);
@@ -76,7 +79,7 @@ exports.getProfilePicture = asyncHandler(async (req, res, next) => {
 });
 
 exports.getUserAge = asyncHandler(async (req, res, next) => {
-    const query = await User.findById(req.body.oid).select('age').exec();
+    const query = await User.findById(req.body.uid).select('age').exec();
 
     if (query === null) {
         console.log(err);
@@ -86,40 +89,36 @@ exports.getUserAge = asyncHandler(async (req, res, next) => {
     console.log(query);
 });
 
-exports.updateHeight = asyncHandler(async (req, res, next) => {
-    await User.findByIdAndUpdate(req.params.uid, {height: req.body.height});
-    res.status(200).send("Success");
-});
-
-exports.updateWeight = asyncHandler(async (req, res, next) => {
-    await User.findByIdAndUpdate(req.params.uid, {weight: req.body.weight});
-    res.status(200).send("Success");
-});
-
-exports.updateUserBio = asyncHandler(async (req, res, next) => {
+exports.updateMetrics = asyncHandler(async (req, res, next) => {
     await User.findByIdAndUpdate(req.params.uid, {
-        fname: req.body.firstName,
-        lname: req.body.lastName,
-        mi: req.body.middleInitial,
-        suffix: req.body.suffix
-    });
+        $set: {
+          height: req.body.height,
+          weight: req.body.weight
+        }
+      },);
     res.status(200).send("Success");
+});
+
+exports.updateBio = asyncHandler(async (req, res, next) => {
+    const user = await User.findByIdAndUpdate(req.params.uid, {
+        $set: {
+            fname: req.body.firstName,
+            lname: req.body.lastName,
+            mi: req.body.middleInitial,
+            suffix: req.body.suffix,
+            sex: req.body.sex,
+            location: req.body.location,
+            uni: req.body.uni,
+            degree: req.body.degree
+        }
+    }, {new: true} );
+    res.status(200).send("Success").json(user);
 });
 
 // exports.updateProfilePicture = asyncHandler(async (req, res, next) => {
 //     await User.findByIdAndUpdate(req.params.uid, {height: req.body.height});
 //     res.status(200).send("Success");
 // });
-
-exports.updateUni = asyncHandler(async (req, res, next) => {
-    await User.findByIdAndUpdate(req.params.uid, {uno: req.body.uni});
-    res.status(200).send("Success");
-});
-
-exports.updateDegree = asyncHandler(async (req, res, next) => {
-    await User.findByIdAndUpdate(req.params.uid, {deg: req.body.deg});
-    res.status(200).send("Success");
-});
 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
     await User.findByIdAndUpdate(req.params.uid, {password: req.body.password});

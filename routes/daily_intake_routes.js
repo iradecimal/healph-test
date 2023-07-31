@@ -6,7 +6,8 @@ router.post("/new/:uid", IntakeController.newDailyIntake);
 router.patch("/update/:uid/:date", IntakeController.updateDailyIntake);
 //router.get("")
 router.get("/view/:uid/:date", IntakeController.viewDailyIntake);
-//router.get("/get-hale/:uid/:date", IntakeController.getHALE);
-//router.get("/get-phd/:uid/:date", IntakeController.getPHD); I don't think we need this
+router.get("/get-hale/:uid/:date", IntakeController.getHALE);
+router.get("/get-phd/:uid/:date", IntakeController.getPHD);
+
 
 module.exports = router;

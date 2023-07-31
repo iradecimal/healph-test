@@ -27,7 +27,8 @@ exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
             dailycal: req.body.dailcal,
             steps: req.body.steps,
             phd: req.body.phd,
-            hale: req.body.hale
+            hale: req.body.hale,
+            submit: true
           }
         }, {new: true}
       ).exec();
@@ -41,7 +42,8 @@ exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
 });
 
 exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
-    const intake = await Daily_Intake.find({ uid:req.params.uid, date: req.params.date }).exec();
+    const intake = await Daily_Intake.find({ uid:req.params.uid, date: req.params.date }).select(
+    "date sleephrs waterglass dailycal steps phd hale").exec();
     const intakeMeals = await Meal.find({ dailyid: intake._id }).exec();
     
     if (!intake) {
@@ -52,10 +54,9 @@ exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
     }
 });
 
-//getmealsfrom intake
 
 exports.getHALE = asyncHandler(async (req, res, next) => {
-    const HALE = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}, "hale").exec();
+    const HALE = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}).select("hale").exec();
 
     if (!HALE) {
         console.log(err);
@@ -66,7 +67,7 @@ exports.getHALE = asyncHandler(async (req, res, next) => {
 });
 
 exports.getPHD = asyncHandler(async (req, res, next) => {
-    const PHD = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}, "phd").exec();
+    const PHD = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}).select("phd").exec();
     
     if (!PHD) {
         console.log(err);
