@@ -9,7 +9,7 @@ router.get("/logout", UserController.logout);
 router.get("/get-user/:uid", UserController.getUser);
 router.get("/get-full-name/:uid", UserController.getFullName);
 router.get("/get-picture/:uid", UserController.getProfilePicture);
-router.get("/get-user-age/:uid", UserController.getUserAge);
+router.get("/get-age/:uid", UserController.getUserAge);
 router.patch("/update-metrics/:uid", UserController.updateMetrics);
 router.patch("/update-bio/:uid", UserController.updateBio);
 router.patch("/update-password/:uid", UserController.updatePassword);

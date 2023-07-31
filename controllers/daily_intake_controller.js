@@ -1,12 +1,12 @@
 const asyncHandler = require('express-async-handler');
-const Daily_Intake =require('../models/daily_intake.js');
+const Intake = require('../models/daily_intake.js');
 const Meal = require('../models/meal.js');
 require('mongoose').Promise = global.Promise
 
 //create a new empty intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
     const newDate = new Date();
-    const newIntake = new Daily_Intake({uid: req.params.uid, date: newDate.toISOString().slice(0,10) });
+    const newIntake = new Intake({uid: req.params.uid, date: newDate.toISOString().slice(0,10) });
 
         await newIntake.save()
             .then(() => {
@@ -19,7 +19,7 @@ exports.newDailyIntake = asyncHandler(async (req, res, next) => {
 
 exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
 
-    const intake = await Daily_Intake.findOneAndUpdate(
+    const intake = await Intake.findOneAndUpdate(
         { uid: req.params.uid, date: req.params.date },
         {
           $set: {
@@ -44,37 +44,42 @@ exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
 });
 
 exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
-    const intake = await Daily_Intake.find({ uid:req.params.uid, date: req.params.date }).select(
+    const intake = await Intake.findOne({ uid:req.params.uid, date: req.params.date }).select(
     "date sleephrs waterglass dailycal steps phd hale").exec();
     const intakeMeals = await Meal.find({ dailyid: intake._id }).exec();
     
-    if (!intake) {
+    if (intake === null) {
         console.log(err);
         res.status(404).send("Intake was not found");
-    } else {
-        res.status(201).json({intake: intake, meals: intakeMeals});
     }
+
+    res.status(201).json({intake: intake, meals: intakeMeals});
+    
 });
 
 
 exports.getHALE = asyncHandler(async (req, res, next) => {
-    const HALE = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}).select("hale").exec();
+    const intake = await Intake.findOne({ uid:req.params.uid, date: req.params.date }).exec();
 
-    if (!HALE) {
-        console.log(err);
+    if (intake === null) {
         res.status(404).send("Intake was not found");
-    } else {
-        res.status(200).json(HALE);
     }
+
+    const hale = intake.hale;
+
+    res.status(200).json({hale: hale});
+    
 });
 
 exports.getPHD = asyncHandler(async (req, res, next) => {
-    const PHD = await Daily_Intake.find({ uid: req.body.date, date: Date(req.body.date)}).select("phd").exec();
+    const intake = await Intake.findOne({ uid: req.params.uid, date: req.params.date}).select("phd").exec();
     
-    if (!PHD) {
+    if (intake === null) {
         console.log(err);
         res.status(404).send("Intake was not found");
-    } else {
-        res.status(200).json(PHD);
     }
+    const phd = intake.phd;
+
+    res.status(200).json({phd: phd});
+
 });

@@ -29,7 +29,7 @@ const userSchema = new Schema({
 });
 
 userSchema.virtual('fullName').get(function () {
-    return this.name.fname + '' + this.name.lname + '' + this.name.suffix;
+    return this.name.fname + ' ' + this.name.lname + ' ' + this.name.suffix;
 });
 
 userSchema.virtual("url").get(function () {
@@ -38,9 +38,10 @@ userSchema.virtual("url").get(function () {
 
 userSchema.virtual('age').get(function() {
     var today = new Date();
-    var age = today.getFullYear() - this.bday.getFullYear();
-    var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    var birthdate = new Date(this.bday); 
+    var age = today.getFullYear() - birthdate.getFullYear();
+    var m = today.getMonth() - birthdate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) {
         age--;
     }
     return age;
