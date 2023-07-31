@@ -1,4 +1,3 @@
-const express = require("express");
 const asyncHandler = require('express-async-handler');
 const Daily_Intake =require('../models/daily_intake.js');
 const Meal = require('../models/meal.js');
