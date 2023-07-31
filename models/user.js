@@ -17,13 +17,13 @@ const userSchema = new Schema({
   },
   sex: {type: String, required: true},
   bday: { type: String, required: true, minLength: 9 ,maxLength: 11 },
-  pic: { type: String },
+  pic: { type: String, default: '' },
   loc: { region: String, town: String },
   uni: { type: String, required: true },
   deg: { type: String, required: true },
   joindate: { type: Date, default: Date.now },
   illnesses: { type: [String] },
-  allergies: { type: String },
+  allergies: { type: [String] },
   weight: { type: Number, min: 0 },
   height: { type: Number, min: 0 }
 });
@@ -48,25 +48,14 @@ userSchema.virtual('age').get(function() {
 
 //password encryption code taken from mongodb blog by @jmar777
 
-userSchema.pre("save", function (next) {
-  var user = this;
-
-  if(!user.isModified('password')) return next();
-
-  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) { 
-    if (err) return next(err);
-
-    bcrypt.hash(user.password, salt, function(err, hash ) {
-      if (err) return next(err); 
-
-      user.password = hash;
-      next();
-    })
-  })
+userSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.pass = await bcrypt.hash(this.pass, salt);
+  next();
 });
 
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+userSchema.methods.comparePassword = function(candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.pass, function(err, isMatch) {
       if (err) return cb(err);
       cb(null, isMatch);
   });
@@ -75,7 +64,7 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
 userSchema.statics.login = async function(email, password) {
   const user = await this.findOne({ email });
   if (user) {
-    const auth = await bcrypt.compare(password, user.password);
+    const auth = await bcrypt.compare(password, user.pass);
     if (auth) {
       return user;
     }
