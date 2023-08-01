@@ -23,10 +23,10 @@ exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
         { uid: req.params.uid, date: req.params.date },
         {
           $set: {
-            sleephrs: req.body.sleephrs,
-            waterglass: req.body.waterglass,
-            dailycal: req.body.dailcal,
-            steps: req.body.steps,
+            sleephrs: req.body.hoursOfSleep,
+            waterglass: req.body.glassesOfWater,
+            dailycal: req.body.dailyCalories,
+            steps: req.body.stepsTaken,
             phd: req.body.phd,
             hale: req.body.hale,
             submit: true
