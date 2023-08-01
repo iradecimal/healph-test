@@ -38,7 +38,7 @@ const Sidebar = () => {
         <div style={{ display: "flex", alignItems: "center" }}>
           <Image src="profpic.jpg" alt="Profile Picture" className="round-image" />
           <Dropdown.Toggle variant="success" id="dropdown-basic" className="dropdown-text">
-            Nate Muncal
+            User user
           </Dropdown.Toggle>
         </div>
         <Dropdown.Menu>

@@ -45,6 +45,7 @@
 .sidebar-dropdown {
     position: fixed;
     padding-bottom: 10px;
+    padding-left: 10px;
     bottom: 0;
 }
 

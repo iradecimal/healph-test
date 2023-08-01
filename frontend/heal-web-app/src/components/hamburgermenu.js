@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Image, Nav } from "react-bootstrap";
-import { FaHome, FaUtensils, FaClipboard } from "react-icons/fa";
+import { FaHome, FaUtensils, FaClipboard,FaCog,FaSignOutAlt } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import "./hamburgermenu.css";
 
@@ -34,11 +34,11 @@ const HamburgerMenu = () => {
 
           <div className="divider" />
           <Nav.Link href="/settings" active={location.pathname === "/settings"}>
-            <FaClipboard className="icon" />
+            <FaCog className="icon" />
             User Settings
           </Nav.Link>
           <Nav.Link href="/" active={location.pathname === "/"}>
-            <FaClipboard className="icon" />
+            <FaSignOutAlt className="icon" />
             Logout
           </Nav.Link>
         </Nav>
