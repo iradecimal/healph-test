@@ -39,7 +39,7 @@ exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
         console.log("Intake was not found");
         res.status(404).send("Intake was not found");
     } else {
-        res.status(204).json(intake);
+        res.status(200).json(intake);
     }
 });
 
