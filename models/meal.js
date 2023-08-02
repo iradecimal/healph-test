@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const Schema = mongoose.Schema;
 
@@ -14,5 +15,7 @@ const mealSchema = new Schema({
   mealdesc: { type: String },
   foodgroups: { type : [String]  }
 })
+
+mealSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Meal", mealSchema);

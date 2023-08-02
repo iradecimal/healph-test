@@ -7,5 +7,6 @@ router.get("/view/:oid", ReportController.viewReport);
 router.get("/find/:uid", ReportController.findUserReport);
 router.patch("/update/:oid", ReportController.updateReport);
 router.patch("/flag/:oid", ReportController.flagReport);
+router.delete("/delete/:oid", ReportController.deleteReport);
 
 module.exports = router;
