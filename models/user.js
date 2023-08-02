@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 const bcrypt = require("bcrypt");
 
 const Schema = mongoose.Schema;
@@ -73,5 +74,7 @@ userSchema.statics.login = async function(email, password) {
   }
   throw Error('incorrect email');
 }
+
+userSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("User", userSchema);
