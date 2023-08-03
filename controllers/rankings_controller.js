@@ -67,7 +67,7 @@ exports.weeklyRankings = asyncHandler(async (req, res, next) => {
     res.status(200).send(rankings);
 });
 //monthly rankings
-exports.weeklyRankings = asyncHandler(async (req, res, next) => {
+exports.monthlyRankings = asyncHandler(async (req, res, next) => {
     let week_date = new Array();
 
     let dailydate = new Date();
