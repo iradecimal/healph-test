@@ -1,36 +1,28 @@
 import React from "react";
 import Sidebar from "../components/sidebar";
 import { Container, Row, Col } from "react-bootstrap";
-import DailyIntakeTable from "../components/dailyintakes_table";
+import ReportsTable from "../components/reports_table";
 import HamburgerMenu from "../components/hamburgermenu";
 
 const currentDate = new Date();
 const formattedDate = currentDate.toLocaleDateString("en-GB");
 
-const Dailyintakes = () => {
+const ReportsPage = () => {
   // Sample data
   const dataTemplate = {
-    Userid: 0,
+    ReportId: 0,
     RecordDate: formattedDate,
-    Hrsofsleep: 0,
-    Glassesofwater: 0,
-    Stepstaken: 0,
-    Caloricintake: 0,
-    Caloricdiversity: 0,
-    HALE: 0,
-    PHD: 0,
+    Type: 0,
+    Details: "Lorem Ipsum",
+    Status: 0,
   };
 
   const data = Array.from({ length: 30 }, (_, index) => ({
     ...dataTemplate,
-    Userid: index + 1,
-    Hrsofsleep: Math.floor(Math.random() * 11),
-    Glassesofwater: Math.floor(Math.random() * 11),
-    Stepstaken: Math.floor(Math.random() * 11),
-    Caloricintake: Math.floor(Math.random() * 11),
-    Caloricdiversity: Math.floor(Math.random() * 11),
-    HALE: Math.floor(Math.random() * 11),
-    PHD: Math.floor(Math.random() * 11),
+    ReportId: index + 1,
+    RecordDate: formattedDate,
+    Type: Math.floor(Math.random() * 3),
+    Status: Math.floor(Math.random() * 2),
   }));
 
   return (
@@ -51,9 +43,9 @@ const Dailyintakes = () => {
                   fontWeight: "600",
                 }}
               >
-                Daily Intakes
+                Reports
               </h2>
-              <DailyIntakeTable data={data} />
+              <ReportsTable data={data} />
             </div>
           </Col>
         </Row>
@@ -62,4 +54,4 @@ const Dailyintakes = () => {
   );
 };
 
-export default Dailyintakes;
+export default ReportsPage;
