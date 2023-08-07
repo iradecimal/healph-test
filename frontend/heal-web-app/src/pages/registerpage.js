@@ -1,6 +1,6 @@
 import React from "react";
 import RegisterForm from "../components/registerform";
-import Footer from "../components/footer";
+// import Footer from "../components/footer";
 import { Container } from "react-bootstrap";
 
 const LoginPage = () => {
@@ -9,7 +9,7 @@ const LoginPage = () => {
       <Container>
         <RegisterForm />
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
