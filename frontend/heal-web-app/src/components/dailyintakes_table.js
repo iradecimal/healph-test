@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Table, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
 import "./dailyintaketable.css";
 import ItemsPagination from "./pagination";
 import DatePicker from "react-datepicker";
@@ -182,7 +182,13 @@ const DailyIntakeTable = ({ data }) => {
         />
       </div>
       <div style={{ maxWidth: "100%", overflowX: "auto" }}>
-        <Table striped bordered hover style={{ borderColor: "#9FC856" }}>
+        <Table
+          striped
+          bordered
+          hover
+          style={{ borderColor: "#9FC856" }}
+          size="sm"
+        >
           <thead>
             <tr>
               <th onClick={(event) => handleSort("Userid", event)}>
@@ -220,7 +226,7 @@ const DailyIntakeTable = ({ data }) => {
                 Hours of Sleep
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minHoursOfSleepFilter}
                   onChange={handleMinHoursOfSleepFilterChange}
@@ -228,7 +234,7 @@ const DailyIntakeTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxHoursOfSleepFilter}
                   onChange={handleMaxHoursOfSleepFilterChange}
@@ -239,7 +245,7 @@ const DailyIntakeTable = ({ data }) => {
                 Glasses of Water
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minGlassesOfWaterFilter}
                   onChange={handleMinGlassesOfWaterFilterChange}
@@ -247,7 +253,7 @@ const DailyIntakeTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxGlassesOfWaterFilter}
                   onChange={handleMaxGlassesOfWaterFilterChange}
@@ -258,7 +264,7 @@ const DailyIntakeTable = ({ data }) => {
                 Steps Taken
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minStepsTakenFilter}
                   onChange={handleMinStepsTakenFilterChange}
@@ -266,7 +272,7 @@ const DailyIntakeTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxStepsTakenFilter}
                   onChange={handleMaxStepsTakenFilterChange}
@@ -277,7 +283,7 @@ const DailyIntakeTable = ({ data }) => {
                 Caloric Intake
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minCaloricIntakeFilter}
                   onChange={handleMinCaloricIntakeFilterChange}
@@ -285,7 +291,7 @@ const DailyIntakeTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxCaloricIntakeFilter}
                   onChange={handleMaxCaloricIntakeFilterChange}
@@ -296,14 +302,14 @@ const DailyIntakeTable = ({ data }) => {
                 Caloric Diversity
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minCaloricDiversityFilter}
                   onChange={handleMinCaloricDiversityFilterChange}
                   placeholder="Filter"
                 />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxCaloricDiversityFilter}
                   onChange={handleMaxCaloricDiversityFilterChange}
@@ -314,7 +320,7 @@ const DailyIntakeTable = ({ data }) => {
                 HALE
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minHaleFilter}
                   onChange={handleMinHaleFilterChange}
@@ -322,7 +328,7 @@ const DailyIntakeTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxHaleFilter}
                   onChange={handleMaxHaleFilterChange}
@@ -333,7 +339,7 @@ const DailyIntakeTable = ({ data }) => {
                 PHD
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minPhdFilter}
                   onChange={handleMinPhdFilterChange}
@@ -341,7 +347,7 @@ const DailyIntakeTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxPhdFilter}
                   onChange={handleMaxPhdFilterChange}

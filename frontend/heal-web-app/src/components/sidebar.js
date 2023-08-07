@@ -12,9 +12,12 @@ const Sidebar = () => {
   return (
     <div>
       <Nav className="sidebar col-md-2 flex-column d-none d-md-block">
-        <div className="image-container">
-          <Image src="HEALPH.png" alt="Sidebar Logo" fluid />
-        </div>
+        <Image
+          src="HEALPH.png"
+          alt="Sidebar Logo"
+          fluid
+          style={{ width: "150px", height: "auto" }}
+        />
 
         <Nav.Item>
           <Nav.Link

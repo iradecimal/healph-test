@@ -1,15 +1,15 @@
 import React from "react";
 import LoginForm from "../components/loginform";
-import Footer from "../components/footer";
+// import Footer from "../components/footer";
 import { Container } from "react-bootstrap";
 
 const LoginPage = () => {
   return (
-    <div>
+    <div style={{ overflowY: "auto" }}>
       <Container>
         <LoginForm />
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

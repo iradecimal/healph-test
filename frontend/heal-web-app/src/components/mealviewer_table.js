@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Table, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
 import "./dailyintaketable.css";
 import ItemsPagination from "./pagination";
 import DatePicker from "react-datepicker";
@@ -106,8 +106,8 @@ const MealViewerTable = ({ data }) => {
       (endDateFilter === null ||
         item.RecordDate <= endDateFilter.toLocaleDateString("en-GB")) &&
       (minFatsFilter === "" ||
-        (item.Fat >= minFatsFilter &&
-          (maxFatsFilter === "" || item.Fat <= maxFatsFilter))) &&
+        (item.Fats >= minFatsFilter &&
+          (maxFatsFilter === "" || item.Fats <= maxFatsFilter))) &&
       (minCarbohydratesFilter === "" ||
         (item.Carbohydrates >= minCarbohydratesFilter &&
           (maxCarbohydratesFilter === "" ||
@@ -154,13 +154,19 @@ const MealViewerTable = ({ data }) => {
         onPageChange={handlePageChange}
       />
       <div style={{ maxWidth: "100%", overflowX: "auto" }}>
-        <Table striped bordered hover style={{ borderColor: "#9FC856" }}>
+        <Table
+          striped
+          bordered
+          hover
+          style={{ borderColor: "#9FC856" }}
+          size="sm"
+        >
           <thead>
             <tr>
               <th onClick={(event) => handleSort("Userid", event)}>
                 Meal ID
                 <br />
-                <input
+                <Form.Control
                   type="text"
                   value={mealIdFilter}
                   onChange={handleMealIdFilterChange}
@@ -191,7 +197,7 @@ const MealViewerTable = ({ data }) => {
                 Fats
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minFatsFilter}
                   onChange={handleMinFatsFilterChange}
@@ -199,7 +205,7 @@ const MealViewerTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxFatsFilter}
                   onChange={handleMaxFatsFilterChange}
@@ -210,7 +216,7 @@ const MealViewerTable = ({ data }) => {
                 Carbohydrates
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minCarbohydratesFilter}
                   onChange={handleMinCarbohydratesFilterChange}
@@ -218,7 +224,7 @@ const MealViewerTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxCarbohydratesFilter}
                   onChange={handleMaxCarbohydratesFilterChange}
@@ -229,7 +235,7 @@ const MealViewerTable = ({ data }) => {
                 Protein
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minProteinFilter}
                   onChange={handleMinProteinFilterChange}
@@ -237,7 +243,7 @@ const MealViewerTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxProteinFilter}
                   onChange={handleMaxProteinFilterChange}
@@ -248,7 +254,7 @@ const MealViewerTable = ({ data }) => {
                 Food waste
                 <br />
                 Min:
-                <input
+                <Form.Control
                   type="text"
                   value={minFoodwasteFilter}
                   onChange={handleMinFoodwasteFilterChange}
@@ -256,7 +262,7 @@ const MealViewerTable = ({ data }) => {
                 />
                 <br />
                 Max:
-                <input
+                <Form.Control
                   type="text"
                   value={maxFoodwasteFilter}
                   onChange={handleMaxFoodwasteFilterChange}
@@ -266,7 +272,7 @@ const MealViewerTable = ({ data }) => {
               <th>
                 Food Combination
                 <br />
-                <input
+                <Form.Control
                   type="text"
                   value={foodCombinationFilter}
                   onChange={handleFoodCombinationFilterChange}
@@ -276,7 +282,7 @@ const MealViewerTable = ({ data }) => {
               <th>
                 Description
                 <br />
-                <input
+                <Form.Control
                   type="text"
                   value={descriptionFilter}
                   onChange={handleDescriptionFilterChange}
