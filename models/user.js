@@ -1,104 +1,77 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String, 
-    required: true,
-    validate: {
-      validator: function(v){
-        //if need ng regex validation for password content
-        var exp = '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';  //pulled from regexr, modify if necessary (if for example emails can have one letter TLD)
-        return exp.test(v);
-      },
-      message: 'Invalid email.'
-    }
-  },
-  pass: {
-    type: String, 
-    required: [true, 'User must have a password'],
-    validate: {
-      validator: function(v){
-        //placeholder values for password validation
-        var exp = '^[\w-\.]{8,16}$';
-        return exp.test(v);
-      },
-      message: 'Password must be alphanumerical between 8 to 16 characters.'
-    }
-  },
-  uname: {
-    type: String, 
-    required: [true, 'User must have a username.'],
-    //placeholder values for username validation
-    validate: {
-      validator: function(v){
-        var exp = '^[\w-\.]{4,12}$'
-        return exp.test(v);
-      },
-      message: 'Username must be alphanumerical between 4 to 12 characters.'
-    }
-  },
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  email: { type: String, required: true,
+      maxLength: 50, unique: [true, 'email is already taken'] },
+  pass: { type: String, required: true, minLength: 8, maxLength: 24 },
+  uname: { type: String, required: true, minLength: 4, 
+      maxLength: 24, unique: [true, 'username is already taken'] },
   name: {
-    fname: String,
-    lname: String,
-    mi: String,
-    suffix: {
-      type: String, 
-      default: ''
-    }
+    fname: { type: String, required: true },
+    lname: { type: String, required: true },
+    mi: { type: String, default: '' },
+    suffix: { type: String, default: '' }
   },
-  bday: {
-    type: Date,
-    required: true
-  }, 
-  pic: {
-    type: String
-  },
-  loc: {
-    region: String,
-    town: String
-  },
-  uni: {
-    type: String, 
-    required: true
-  },
-  deg: {
-    type: String, 
-    required: true
-  },
-  //can set get to provide user's computed age instead
-  joindate: {
-    type: Date, 
-    default: Date.now
-  },
-  illnesses: {
-    type: [String]
-  },
-  allergies: {
-    type: String
-  },
-  weight: {
-    type: Number,
-    min: [0, 'Weight must be zero or postive, received {VALUE}']
-    
-  },
-  height: {
-    type: Number,
-    min: [0, 'Height must be zero or postive, received {VALUE}']
-  },
+  sex: {type: String, required: true},
+  bday: { type: String, required: true, minLength: 9 ,maxLength: 11 },
+  pic: { type: String, default: '' },
+  loc: { region: String, town: String },
+  uni: { type: String, required: true },
+  deg: { type: String, required: true },
+  joindate: { type: Date, default: Date.now },
+  illnesses: { type: [String] },
+  allergies: { type: [String] },
+  weight: { type: Number, min: 0 },
+  height: { type: Number, min: 0 }
 });
 
-userSchema.virtual('fullName').get(function() {
-    return this.name.fname + '' + this.name.lname + '' + this.name.suffix;
+userSchema.virtual('fullName').get(function () {
+    return this.name.fname + ' ' + this.name.lname + ' ' + this.name.suffix;
+});
+
+userSchema.virtual("url").get(function () {
+    return "/users/" + this.uname;
 });
 
 userSchema.virtual('age').get(function() {
     var today = new Date();
-    var age = today.getFullYear() - this.bday.getFullYear();
-    var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    var birthdate = new Date(this.bday); 
+    var age = today.getFullYear() - birthdate.getFullYear();
+    var m = today.getMonth() - birthdate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) {
         age--;
     }
     return age;
 });
 
-module.exports = Object.freeze({User: userSchema});
+//password encryption code taken from mongodb blog by @jmar777
+
+userSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.pass = await bcrypt.hash(this.pass, salt);
+  next();
+});
+
+userSchema.methods.comparePassword = function(candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.pass, function(err, isMatch) {
+      if (err) return cb(err);
+      cb(null, isMatch);
+  });
+}
+
+userSchema.statics.login = async function(email, password) {
+  const user = await this.findOne({ email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.pass);
+    if (auth) {
+      return user;
+    }
+    throw Error('incorrect password');
+  }
+  throw Error('incorrect email');
+}
+
+module.exports = mongoose.model("User", userSchema);

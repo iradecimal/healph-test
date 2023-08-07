@@ -1,40 +1,18 @@
 const mongoose = require('mongoose');
 
-const mealSchema = new mongoose.Schema({
-  uid: {
-    type: mongoose.ObjectId,
-    required: true
-  },
-  dailyid: {
-    type: mongoose.ObjectId,
-    required: true
-  },
-  datetime: {
-    type: Date, 
-    default: Date.now()
-  },
-  cal: {
-    type: Number,
-    min: [0, 'Calories must be zero or postive, received {VALUE}']
-  },
-  fat: {
-    type: Number,
-    min: [0, 'Fat must be zero or postive, received {VALUE}']
-  },
-  carbs: {
-    type: Number,
-    min: [0, 'Carbohydrates must be zero or postive, received {VALUE}']
-  },
-  proteins: {
-    type: Number,
-    min: [0, 'Proteins must be zero or postive, received {VALUE}']
-  },
-  mealdesc: {
-    type: String
-  },
-  foodgroups: {
-    type : [String]
-  }
+const Schema = mongoose.Schema;
+
+const mealSchema = new Schema({
+  uid: { type: Schema.ObjectId, ref: "User", required: true },
+  dailyid: { type: Schema.ObjectId, ref: "Intake", required: true },
+  datetime: { type: Date, default: Date.now() },
+  pic: {type: String},
+  cal: { type: Number, min: 0 },
+  fat: { type: Number, min: 0 },
+  carbs: { type: Number, min: 0 },
+  proteins: { type: Number, min: 0 },
+  mealdesc: { type: String },
+  foodgroups: { type : [String]  }
 })
 
-module.exports = Object.freeze({Meal: mealSchema});
+module.exports = mongoose.model("Meal", mealSchema);

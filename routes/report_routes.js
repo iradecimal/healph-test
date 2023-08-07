@@ -2,8 +2,10 @@ const express = require("express");
 const router = express.Router();
 const ReportController = require('../controllers/report_controller.js');
 
-router.get("/new-report", ReportController.newReport);
-router.post("/update-report/:oid", ReportController.updateReport);
-router.post("/flag-report/:oid", ReportController.flagReport);
+router.post("/new", ReportController.newReport);
+router.get("/view/:oid", ReportController.viewReport);
+router.get("/find/:uid", ReportController.findUserReport);
+router.patch("/update/:oid", ReportController.updateReport);
+router.patch("/flag/:oid", ReportController.flagReport);
 
-export default router;
+module.exports = router;

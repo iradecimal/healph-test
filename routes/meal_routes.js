@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const MealController = require('../controllers/meal_controller.js');
 
-router.get("/new-meal", MealController.getUserAge);
-router.post("/get-meal/:oid", MealController.updateHeight);
+router.post("/new", MealController.newMeal);
+router.get("/get/:oid", MealController.getMeal);
+router.post("/upload-pic/:oid", MealController.uploadMealPicture);
 
-export default router;
+module.exports = router;

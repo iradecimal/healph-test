@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const IntakeController = require('../controllers/intake_controller.js');
+const IntakeController = require('../controllers/daily_intake_controller.js');
 
-router.get("/new-daily-intake", IntakeController.newDailyIntake);
-router.post("/update-daily-intake/:date", IntakeController.updateDailyIntake);
-router.get("/view-daily-intake/:date", IntakeController.viewDailyIntake);
-router.get("/get-hale/:date", IntakeController.getHALE);
-router.get("/get-phd/:date", IntakeController.getPHD);
+router.post("/new/:uid", IntakeController.newDailyIntake);
+router.patch("/update/:uid/:date", IntakeController.updateDailyIntake);
+//router.get("")
+router.get("/view/:uid/:date", IntakeController.viewDailyIntake);
+router.get("/get-hale/:uid/:date", IntakeController.getHALE);
+router.get("/get-phd/:uid/:date", IntakeController.getPHD);
 
-export default router;
+
+module.exports = router;
