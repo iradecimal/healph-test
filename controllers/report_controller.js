@@ -23,7 +23,7 @@ exports.viewReport = asyncHandler(async (req, res, next) => {
         res.status(404).send("Reports cannot be found");
     }
 
-    res.json(reports);
+    res.status(200).json(reports);
 });
 
 exports.findUserReport = asyncHandler(async (req, res, next) => {
@@ -31,7 +31,7 @@ exports.findUserReport = asyncHandler(async (req, res, next) => {
     if (reports === null) {
         res.status(404).send("Reports cannot be found");
     }
-    res.status(201).json(reports);
+    res.status(200).json(reports);
 });
 
 exports.updateReport = asyncHandler(async (req, res, next) => {

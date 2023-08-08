@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 const bcrypt = require("bcrypt");
 
 const Schema = mongoose.Schema;
@@ -17,7 +18,7 @@ const userSchema = new Schema({
   },
   sex: {type: String, required: true},
   bday: { type: String, required: true, minLength: 9 ,maxLength: 11 },
-  pic: { type: String, default: '' },
+  pic: { type: String, default: '' }, //to deprecate
   loc: { region: String, town: String },
   uni: { type: String, required: true },
   deg: { type: String, required: true },
@@ -73,5 +74,7 @@ userSchema.statics.login = async function(email, password) {
   }
   throw Error('incorrect email');
 }
+
+userSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("User", userSchema);
