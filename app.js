@@ -4,14 +4,15 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const compression = require("compression");
+const cors = require("cors");
 
 const userRouter = require('./routes/user_routes.js');
 const intakeRouter = require('./routes/daily_intake_routes.js');
 const mealRouter = require('./routes/meal_routes.js');
 const reportRouter = require('./routes/report_routes.js');
 const indexRouter = require('./routes/index');
+const rankingRouter = require('./routes/ranking_routes.js');
 const adminRouter = require('./routes/admin_routes.js');
-//const rankingRouter = require('./routes/ranking_routes.js');
 const dashboardRouter = require('./routes/dashboard_routes.js');
 
 
@@ -34,6 +35,8 @@ async function main() {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

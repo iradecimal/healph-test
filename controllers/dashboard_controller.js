@@ -26,10 +26,15 @@ exports.getIntakes = asyncHandler(async (req, res, next) => {
     let queryStr = cleanFindString(reqQuery);
 
     if (sort == null){
-        intakes = await Daily_Intake.find(JSON.parse(queryStr));
+        intakes = await Daily_Intake.paginate(JSON.parse(queryStr),
+        {page: req.params.page, limit: req.params.limit});
     } else {      
         const sortString = sort.replace(",", " ");
-        intakes = await Daily_Intake.find(JSON.parse(queryStr)).collation({locale: "en", strength: 2}).sort(sortString);
+        intakes = await Daily_Intake.paginate(JSON.parse(queryStr),{
+            page: req.params.page, 
+            limit: req.params.limit,
+            collation: {locale: "en", strength: 2},
+            sort: sortString });
     }
    
     res.send(intakes);
@@ -45,10 +50,15 @@ exports.getMeals = asyncHandler(async (req, res, next) => {
     let queryStr = cleanFindString(reqQuery);
 
     if (sort == null){
-        meals = await Meal.find(JSON.parse(queryStr));
+        meals = await Meal.paginate(JSON.parse(queryStr),
+        {page: req.params.page, limit: req.params.limit});
     } else {      
         const sortString = sort.replace(",", " ");
-        meals = await Meal.find(JSON.parse(queryStr)).collation({locale: "en", strength: 2}).sort(sortString);
+        meals = await Meal.paginate(JSON.parse(queryStr),{
+            page: req.params.page, 
+            limit: req.params.limit,
+            collation: {locale: "en", strength: 2},
+            sort: sortString });
     }
    
     res.send(meals);
@@ -64,10 +74,15 @@ exports.getReports = asyncHandler(async (req, res, next) => {
     let queryStr = cleanFindString(reqQuery);
 
     if (sort == null){
-        reports = await Report.find(JSON.parse(queryStr));
+        reports = await Report.paginate(JSON.parse(queryStr),
+        {page: req.params.page, limit: req.params.limit});
     } else {      
         const sortString = sort.replace(",", " ");
-        reports = await Report.find(JSON.parse(queryStr)).collation({locale: "en", strength: 2}).sort(sortString);
+        reports = await Report.paginate(JSON.parse(queryStr),{
+            page: req.params.page, 
+            limit: req.params.limit,
+            collation: {locale: "en", strength: 2},
+            sort: sortString });
     }
    
     res.send(reports);
@@ -83,10 +98,16 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
     let queryStr = cleanFindString(reqQuery);
 
     if (sort == null){
-        users = await User.find(JSON.parse(queryStr));
+        //users = await User.find(JSON.parse(queryStr));
+        users = await User.paginate(JSON.parse(queryStr),
+            {page: req.params.page, limit: req.params.limit});
     } else {      
         const sortString = sort.replace(",", " ");
-        users = await User.find(JSON.parse(queryStr)).collation({locale: "en", strength: 2}).sort(sortString);
+        users = await User.paginate(JSON.parse(queryStr),{
+            page: req.params.page, 
+            limit: req.params.limit,
+            collation: {locale: "en", strength: 2},
+            sort: sortString });
     }
    
     res.send(users);

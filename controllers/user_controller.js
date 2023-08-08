@@ -105,10 +105,8 @@ exports.getProfilePicture = asyncHandler(async (req, res, next) => {
     if (user === null) {
         res.status(404).send("Meal cannot be found");
     }
-    
-    const query = user.pic;
-
-    res.status(200).json({pic: query});
+    console.log('/profpics/' + req.params.uid + ".jpg");
+    res.status(200).sendFile(req.params.uid + ".jpg", {root: '../profpics'});
 });
 
 exports.getUserAge = asyncHandler(async (req, res, next) => {
@@ -149,10 +147,9 @@ exports.updateBio = asyncHandler(async (req, res, next) => {
     res.status(200).send("Success");
 });
 
-// exports.updateProfilePicture = asyncHandler(async (req, res, next) => {
-//     await User.findByIdAndUpdate(req.params.uid, {height: req.body.height});
-//     res.status(200).send("Success");
-// });
+exports.uploadPicture = asyncHandler(async (req, res, next) => {
+    res.status(200).send("Success");
+});
 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
 

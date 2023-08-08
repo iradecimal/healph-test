@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const Schema = mongoose.Schema;
 
@@ -9,5 +10,7 @@ const reportSchema = new Schema({
   det: { type: String },
   status: { type: Boolean, default: false }
 })
+
+reportSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Report", reportSchema);

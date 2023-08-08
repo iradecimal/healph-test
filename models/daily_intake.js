@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const Schema = mongoose.Schema;
 
@@ -13,4 +14,7 @@ const daily_intakeSchema = new Schema({
   hale: { type: Number, min: 0, default: 0 },
   submit: { type: Boolean, default: false },
 });
+
+daily_intakeSchema.plugin(mongoosePaginate);
+
 module.exports = mongoose.model("Intake", daily_intakeSchema);
