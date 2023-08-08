@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const DashboardController = require('../controllers/dashboard_controller');
+const Auth = require('../auth/auth_token_handler.js');
 
 router.get("/intakes/:page/:limit", DashboardController.getIntakes);
 router.get("/meals/:page/:limit", DashboardController.getMeals);

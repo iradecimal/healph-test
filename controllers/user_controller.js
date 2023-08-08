@@ -1,6 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user.js');
 
+const maxAge = 28 * 24 * 60 * 60;
+const createToken = (id) => {
+    return jwt.sign({ id }, 'HealPHscrambler', {
+      expiresIn: maxAge
+    });
+  };
+
 exports.signup = asyncHandler(async (req, res, next) => {
     const newUser = new User({
         email: req.body.email,
@@ -25,15 +32,21 @@ exports.signup = asyncHandler(async (req, res, next) => {
         weight: req.body.weight,
         height: req.body.height
     });
-    console.log(newUser);
-    await newUser.save();
-    res.status(201).json(newUser);
-        // .then(() => {
-        //     res.status(200).send(newUser);
-        // })
-        // .catch((error) => {
-        //     res.status(400);
-        // });
+
+    try{
+        console.log(newUser);
+        await newUser.save();
+        res.status(201).json({uid: newUser._id});
+    } catch(err) {
+        console.log(err)
+        if (err.code === 11000){
+            res.status(400).json({ error: "Username/Email has already been used"});
+        } else {
+            res.status(400).json(err); 
+        }
+        
+    }
+
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
