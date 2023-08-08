@@ -24,20 +24,17 @@ exports.signup = asyncHandler(async (req, res, next) => {
     } catch(err) {
         res.status(400).json(err);
     }
-
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
-
     try {
-        const user = await Admin.login(req.body.email, req.body.password);
-        const token = createToken(user._id);
+        const admin = await Admin.login(req.body.email, req.body.password);
+        const token = createToken(admin._id);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.status(200).json({ user: user._id });
+        res.status(200).json({ admin: admin._id });
     } catch (err) {
         res.status(400).json(err);
     }
-
 });
 
 exports.logout = asyncHandler(async (req, res, next) => {

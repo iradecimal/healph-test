@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const RankingController = require('../controllers/rankings_controller');
+const Auth = require('../auth/auth_token_handler.js');
 
 router.get("/daily", RankingController.dailyRankings);
 router.get("/weekly", RankingController.weeklyRankings);

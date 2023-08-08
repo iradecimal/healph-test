@@ -1,9 +1,10 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user.js');
+const jwt = require('jsonwebtoken');
 
 const maxAge = 28 * 24 * 60 * 60;
 const createToken = (id) => {
-    return jwt.sign({ id }, 'HealPHscrambler', {
+    return jwt.sign({ id }, 'HealPHScrambler', {
       expiresIn: maxAge
     });
   };
@@ -43,23 +44,25 @@ exports.signup = asyncHandler(async (req, res, next) => {
             res.status(400).json({ error: "Username/Email has already been used"});
         } else {
             res.status(400).json(err); 
-        }
-        
+        }  
     }
-
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
-
+    try {
         const user = await User.login(req.body.email, req.body.password);
-        //token
-        res.status(200).json({user: user._id});
-
+        console.log(user);
+        const token = createToken(user._id);
+        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(200).json({ user: user._id });
+    } catch (err) {
+        res.status(400).json(err);
+    }
 });
 
 exports.logout = asyncHandler(async (req, res, next) => {
-    //
-    res.send("Under Construction");
+    res.cookie('jwt', '', { maxAge: 1 });
+    res.send("User Logged out.");
 });
 
 exports.getUser = asyncHandler(async (req, res, next) => {

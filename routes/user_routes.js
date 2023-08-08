@@ -3,6 +3,7 @@ const router = express.Router();
 const UserController = require('../controllers/user_controller.js');
 const multer  = require('multer');
 const path = require("path");
+const Auth = require('../auth/auth_token_handler.js');
 
 
 const storage = multer.diskStorage({
@@ -19,15 +20,15 @@ const upload = multer({ storage: storage });
 
 router.post("/signup", UserController.signup);
 router.post("/login", UserController.login);
-router.get("/logout", UserController.logout);
-router.post("/upload-pic/:uid", upload.single("image"), UserController.uploadPicture);
-router.get("/get-user/:uid", UserController.getUser);
-router.get("/get-full-name/:uid", UserController.getFullName);
-router.get("/get-pic/:uid", UserController.getProfilePicture);
-router.get("/get-age/:uid", UserController.getUserAge);
-router.patch("/update-metrics/:uid", UserController.updateMetrics);
-router.patch("/update-bio/:uid", UserController.updateBio);
-router.patch("/update-password/:uid", UserController.updatePassword);
+router.get("/logout", Auth.userAuth, UserController.logout);
+router.post("/upload-pic/:uid", Auth.userAuth,  upload.single("image"), UserController.uploadPicture);
+router.get("/get-user/:uid", Auth.userAuth, UserController.getUser);
+router.get("/get-full-name/:uid", Auth.userAuth, UserController.getFullName);
+router.get("/get-pic/:uid", Auth.userAuth, UserController.getProfilePicture);
+router.get("/get-age/:uid", Auth.userAuth, UserController.getUserAge);
+router.patch("/update-metrics/:uid", Auth.userAuth, UserController.updateMetrics);
+router.patch("/update-bio/:uid", Auth.userAuth, UserController.updateBio);
+router.patch("/update-password/:uid", Auth.userAuth, UserController.updatePassword);
 //router.get("/confirm-user/:uid", UserController.confirmUser);
 
 module.exports = router;
