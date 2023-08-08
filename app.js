@@ -10,6 +10,7 @@ const intakeRouter = require('./routes/daily_intake_routes.js');
 const mealRouter = require('./routes/meal_routes.js');
 const reportRouter = require('./routes/report_routes.js');
 const indexRouter = require('./routes/index');
+const adminRouter = require('./routes/admin_routes.js');
 //const rankingRouter = require('./routes/ranking_routes.js');
 const dashboardRouter = require('./routes/dashboard_routes.js');
 
@@ -45,6 +46,11 @@ app.use('/intakes', intakeRouter);
 app.use('/meals', mealRouter);
 app.use('/reports', reportRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/admins', adminRouter);
+app.use('/redirect', (req, res) => {
+  throw Error("Insufficient Permissions. Please log in before attempting to access this data.")
+})
+
 
 app.use(compression()); // Compress all routes
 
