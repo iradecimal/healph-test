@@ -7,7 +7,7 @@ exports.adminAuth  = (req, res, next) => {
     const token = req.cookies.jwt;
 
       if (token) {
-        jwt.verify(token, 'HealPHScrambler', async (err, decodedToken) => {
+        jwt.verify(token, 'HealPHAdminScrambler', async (err, decodedToken) => {
           if (err) {
             console.log(err.message);
             res.redirect('/redirect');
