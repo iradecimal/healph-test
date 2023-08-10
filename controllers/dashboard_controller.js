@@ -112,3 +112,92 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
    
     res.send(users);
 });
+
+exports.getIntakeStatsDaily = asyncHandler(async (req, res, next) => {
+    let dailydate = new Date();
+
+    const dailystats = await Daily_Intake.aggregate([
+        {'$match': {date: dailydate}},
+        {'$group': {
+            _id: null,
+            'hale': {'$avg': '$hale'},
+            'phd': {'$avg': '$phd'},
+            'steps': {'$avg': '$steps'},
+            'sleephrs': {'$avg': '$sleephrs'},
+            'waterglass': {'$avg': '$waterglass'},
+            'dailycal': {'$avg': '$dailycal'},
+        }}
+    ]);
+    res.status(200).send(dailystats);
+});
+
+exports.getIntakeStatsWeekly = asyncHandler(async (req, res, next) => {
+    let week_date = new Array();
+
+    let dailydate = new Date();
+    
+    for (let i = 1; i <= 7; i++){
+        dailydate.setDate(dailydate.getDate() - 1);
+        week_date.push(dailydate.toISOString().slice(0,10));
+    }
+
+    const weeklystats = await Daily_Intake.aggregate([
+        {'$match': {'$or': [ //match for the whole week
+            {date: date1},{date: date2},{date: date3},{date: date4},
+            {date: date5},{date: date6},{date: date7}]}},
+        {'$group': {
+            _id: null,
+            'hale': {'$avg': '$hale'},
+            'phd': {'$avg': '$phd'},
+            'steps': {'$avg': '$steps'},
+            'sleephrs': {'$avg': '$sleephrs'},
+            'waterglass': {'$avg': '$waterglass'},
+            'dailycal': {'$avg': '$dailycal'},
+        }}
+    ]);
+    res.status(200).send(weeklystats);
+});
+
+exports.getMealStatsDaily = asyncHandler(async (req, res, next) => {
+    let dailydate = new Date();
+
+    const dailystats = await Daily_Intake.aggregate([
+        {'$match': {date: dailydate}},
+        {'$group': {
+            _id: null,
+            'fat': {'$avg': '$fat'},
+            'carbs': {'$avg': '$carbs'},
+            'proteins': {'$avg': '$proteins'},
+            'cal': {'$avg': '$cal'},
+            'waste': {'$avg': '$waste'},
+        }}
+    ]);
+    res.status(200).send(dailystats);
+});
+
+exports.getMealStatsWeekly = asyncHandler(async (req, res, next) => {
+    let week_date = new Array();
+
+    let dailydate = new Date();
+    
+    for (let i = 1; i <= 7; i++){
+        dailydate.setDate(dailydate.getDate() - 1);
+        week_date.push(dailydate.toISOString().slice(0,10));
+    }
+
+
+    const weeklystats = await Daily_Intake.aggregate([
+        {'$match': {'$or': [ //match for the whole week
+            {date: date1},{date: date2},{date: date3},{date: date4},
+            {date: date5},{date: date6},{date: date7}]}},
+        {'$group': {
+            _id: null,
+            'fat': {'$avg': '$fat'},
+            'carbs': {'$avg': '$carbs'},
+            'proteins': {'$avg': '$proteins'},
+            'cal': {'$avg': '$cal'},
+            'waste': {'$avg': '$waste'},
+        }}
+    ]);
+    res.status(200).send(weeklystats);
+});

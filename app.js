@@ -49,6 +49,7 @@ app.use('/intakes', intakeRouter);
 app.use('/meals', mealRouter);
 app.use('/reports', reportRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/rankings', rankingRouter);
 app.use('/admins', adminRouter);
 app.use('/redirect', (req, res) => {
   throw Error("Insufficient Permissions. Please log in before attempting to access this data.")

@@ -5,10 +5,11 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
     const newMeal = new Meal({
         uid: req.body.uid, 
         dailyid: req.body.dailyid,
-        cal: req.body.calories,
+        cal: req.body.cal,
         fat: req.body.fat,
         carbs: req.body.carbs,
         proteins: req.body.proteins,
+        waste: req.body.waste,
         mealdesc: req.body.mealdesc,
         foodgroups:  req.body.foodgroups,
     });
@@ -24,7 +25,7 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
 
 exports.getMeal = asyncHandler(async (req, res, next) => {
     const meal = await Meal.findById(req.params.oid).select(
-    'datetime cal fat carbs proteins mealdesc foodgroups').exec();
+    'datetime cal fat carbs proteins waste mealdesc foodgroups').exec();
 
     if (meal === null) {
         console.log(err);
