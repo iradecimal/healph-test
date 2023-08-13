@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/sidebar";
 import { Container, Row, Col } from "react-bootstrap";
 import ReportsTable from "../components/reports_table";
@@ -9,21 +9,53 @@ const formattedDate = currentDate.toLocaleDateString("en-GB");
 
 const ReportsPage = () => {
   // Sample data
-  const dataTemplate = {
-    ReportId: 0,
-    RecordDate: formattedDate,
-    Type: 0,
-    Details: "Lorem Ipsum",
-    Status: 0,
-  };
+  // const dataTemplate = {
+  //   ReportId: 0,
+  //   RecordDate: formattedDate,
+  //   Type: 0,
+  //   Details: "Lorem Ipsum",
+  //   Status: 0,
+  // };
 
-  const data = Array.from({ length: 30 }, (_, index) => ({
-    ...dataTemplate,
-    ReportId: index + 1,
-    RecordDate: formattedDate,
-    Type: Math.floor(Math.random() * 3),
-    Status: Math.floor(Math.random() * 2),
-  }));
+  // const data = Array.from({ length: 30 }, (_, index) => ({
+  //   ...dataTemplate,
+  //   ReportId: index + 1,
+  //   RecordDate: formattedDate,
+  //   Type: Math.floor(Math.random() * 3),
+  //   // Status: Math.floor(Math.random() * 2),
+  // }));
+
+  const data = [
+    {
+      ReportId: 0,
+      RecordDate: formattedDate,
+      Type: 0,
+      Details: "Lorem Ipsum",
+      Status: 0,
+    },
+    {
+      ReportId: 1,
+      RecordDate: formattedDate,
+      Type: 0,
+      Details: "Lorem Ipsum",
+      Status: 1,
+    },
+    {
+      ReportId: 2,
+      RecordDate: formattedDate,
+      Type: 0,
+      Details: "Lorem Ipsum",
+      Status: 1,
+    },
+  ];
+
+  const [tableData, setTableData] = useState(data);
+
+  const handleStatusChange = (itemIndex) => {
+    const updatedData = [...tableData];
+    updatedData[itemIndex].Status = updatedData[itemIndex].Status === 0 ? 1 : 0;
+    setTableData(updatedData);
+  };
 
   return (
     <div>
@@ -45,7 +77,10 @@ const ReportsPage = () => {
               >
                 Reports
               </h2>
-              <ReportsTable data={data} />
+              <ReportsTable
+                data={tableData}
+                onStatusChange={handleStatusChange}
+              />
             </div>
           </Col>
         </Row>

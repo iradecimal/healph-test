@@ -20,7 +20,7 @@ const ConfirmationModal = ({ show, onClose, onConfirm, item }) => {
         <Button
           style={{ backgroundColor: "#9fc856", borderColor: "#9fc856" }}
           onClick={() => {
-            onConfirm(item);
+            onConfirm(item.index);
             onClose();
           }}
         >

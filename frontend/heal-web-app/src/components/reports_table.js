@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
 import "./dailyintaketable.css";
 import ItemsPagination from "./pagination";
 import DatePicker from "react-datepicker";
+import ConfirmationModal from "./confirmationModal";
 import "react-datepicker/dist/react-datepicker.css";
 
-const ReportsTable = ({ data }) => {
+const ReportsTable = ({ data, onStatusChange }) => {
   const [sortedColumn, setSortedColumn] = useState(null);
-
   const [sortOrder, setSortOrder] = useState("asc");
   const [ReportIdFilter, setReportIdFilter] = useState("");
   const [startDateFilter, setStartDateFilter] = useState(null);
@@ -16,7 +16,25 @@ const ReportsTable = ({ data }) => {
   const [DetailsFilter, setDetailsFilter] = useState("");
   const [selectedStatusFilter, setSelectedStatusFilter] = useState("");
 
-  //sorting through frontend (as of now)
+  const [localData, setLocalData] = useState(data);
+
+  const [showModal, setShowModal] = useState(false);
+
+  const openModal = (itemIndex) => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  useEffect(() => {
+    setLocalData(data);
+  }, [data]);
+
+  const handleStatusChangeLocal = (itemIndex) => {
+    onStatusChange(itemIndex);
+  };
 
   const handleSort = (column, event) => {
     if (event.target.nodeName === "INPUT") {
@@ -31,7 +49,7 @@ const ReportsTable = ({ data }) => {
     }
   };
 
-  const sortedData = data.slice().sort((a, b) => {
+  const sortedData = localData.slice().sort((a, b) => {
     if (sortOrder === "asc") {
       return a[sortedColumn] > b[sortedColumn] ? 1 : -1;
     } else {
@@ -234,12 +252,19 @@ const ReportsTable = ({ data }) => {
                       className={`status-shape ${
                         item.Status === 0 ? "red" : "green"
                       }`}
-                      style={{ cursor: "pointer" }} // Add cursor style
+                      style={{ cursor: "pointer" }}
+                      onClick={() => openModal(index)}
                     >
                       {item.Status === 0 ? "Not Fixed" : "Fixed"}
                     </div>
                   </OverlayTrigger>
                 </td>
+                <ConfirmationModal
+                  show={showModal}
+                  onClose={closeModal}
+                  onConfirm={handleStatusChangeLocal}
+                  item={{ index, Status: item.Status }}
+                />
               </tr>
             ))}
           </tbody>
