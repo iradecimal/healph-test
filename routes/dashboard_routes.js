@@ -12,6 +12,9 @@ router.get("/intakes/:page/:limit", Auth.adminAuth, DashboardController.getIntak
 router.get("/meals/:page/:limit", Auth.adminAuth, DashboardController.getMeals);
 router.get("/reports/:page/:limit", Auth.adminAuth, DashboardController.getReports);
 router.get("/users/:page/:limit", Auth.adminAuth, DashboardController.getUsers);
+router.get("/rankings/daily", Auth.adminAuth, DashboardController.dailyRankings);
+router.get("/rankings/weekly", Auth.adminAuth, DashboardController.weeklyRankings);
+router.get("/rankings/monthly", Auth.adminAuth, DashboardController.monthlyRankings);
 
 
 module.exports = router;
