@@ -25,7 +25,7 @@ const AvgCard = ({ icon, label, value }) => (
               {label}
             </span>
           </Card.Title>
-          <Card.Text style={{ fontWeight: "600" }}>{value}</Card.Text>
+          {value}
         </div>
       </div>
     </Card.Body>

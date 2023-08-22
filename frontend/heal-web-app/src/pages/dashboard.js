@@ -17,8 +17,9 @@ import { Chart } from "react-google-charts";
 
 const Dashboard = () => {
   // Dummy data
-  const averageSteps = 7500;
-  const averageSleep = 7.5;
+  const averageSample = 7.5;
+  const averageSample2 = 0;
+  const averageSample3 = 1;
 
   //sample data since not sure what to put on the graphs yet
   const chart_sampledata = [
@@ -30,12 +31,45 @@ const Dashboard = () => {
     ["Sleep", 7],
   ];
 
+  const chart_sampledata2 = [
+    ["Task", "Hours per Day"],
+    ["Work", 9],
+    ["Eat", 3],
+    ["Commute", 2],
+    ["Watch TV", 2],
+    ["Sleep", 8],
+  ];
+
+  const chart_sampledata3 = [
+    ["Task", "Hours per Day"],
+    ["Work", 10],
+    ["Eat", 2],
+    ["Commute", 1],
+    ["Watch TV", 3],
+    ["Sleep", 9],
+  ];
   const bar_sampledata = [
     ["Year", "Sales", "Expenses", "Profit"],
     ["2014", 1000, 400, 200],
     ["2015", 1170, 460, 250],
     ["2016", 660, 1120, 300],
     ["2017", 1030, 540, 350],
+  ];
+
+  const bar_sampledata2 = [
+    ["Year", "Sales", "Expenses", "Profit"],
+    ["2014", 900, 300, 150],
+    ["2015", 1100, 400, 200],
+    ["2016", 700, 1000, 250],
+    ["2017", 950, 500, 300],
+  ];
+
+  const bar_sampledata3 = [
+    ["Year", "Sales", "Expenses", "Profit"],
+    ["2014", 950, 400, 180],
+    ["2015", 1050, 420, 220],
+    ["2016", 800, 900, 270],
+    ["2017", 1000, 600, 320],
   ];
 
   //leaderboards dummy data
@@ -52,16 +86,79 @@ const Dashboard = () => {
     { Name: { first: "Daniel", middle: "S.", last: "Anderson" }, HALE: 1 },
   ];
 
+  const peopleDataWeekly = [
+    { Name: { first: "John", middle: "Doe", last: "Smith" }, HALE: 9 },
+    { Name: { first: "Jane", middle: "E.", last: "Doe" }, HALE: 8 },
+    { Name: { first: "Alice", middle: "M.", last: "Johnson" }, HALE: 7 },
+    { Name: { first: "Bob", middle: "R.", last: "Williams" }, HALE: 6 },
+    { Name: { first: "Emily", middle: "K.", last: "Brown" }, HALE: 5 },
+    { Name: { first: "Michael", middle: "J.", last: "Miller" }, HALE: 4 },
+    { Name: { first: "Olivia", middle: "A.", last: "Taylor" }, HALE: 3 },
+    { Name: { first: "William", middle: "B.", last: "Davis" }, HALE: 2 },
+    { Name: { first: "Sophia", middle: "C.", last: "Wilson" }, HALE: 1 },
+    { Name: { first: "Daniel", middle: "S.", last: "Anderson" }, HALE: 0 },
+  ];
+
+  const peopleDataMonthly = [
+    { Name: { first: "Alex", middle: "F.", last: "Johnson" }, HALE: 10 },
+    { Name: { first: "Emily", middle: "G.", last: "Smith" }, HALE: 9 },
+    { Name: { first: "David", middle: "H.", last: "Williams" }, HALE: 8 },
+    { Name: { first: "Lily", middle: "I.", last: "Brown" }, HALE: 7 },
+    { Name: { first: "Jacob", middle: "J.", last: "Doe" }, HALE: 6 },
+    { Name: { first: "Ella", middle: "K.", last: "Miller" }, HALE: 5 },
+    { Name: { first: "Aiden", middle: "L.", last: "Taylor" }, HALE: 4 },
+    { Name: { first: "Mia", middle: "M.", last: "Davis" }, HALE: 3 },
+    { Name: { first: "Noah", middle: "N.", last: "Wilson" }, HALE: 2 },
+    { Name: { first: "Olivia", middle: "O.", last: "Anderson" }, HALE: 1 },
+  ];
+
   const [overviewInterval, setOverviewInterval] = useState("daily");
   const [leaderboardInterval, setLeaderboardInterval] = useState("daily");
   const intervalOptions = ["daily", "weekly", "monthly"];
+  // const [averageHALE, setAverageHALE] = useState(averageSample);
+  // const [averagePHD, setAveragePHD] = useState(averageSample);
+  // const [averageSteps, setAverageSteps] = useState(averageSample);
+  // const [averageHrsofSleep, setHrsofSleep] = useState(averageSample);
+  // const [averageWaterIntake, setAverageWaterIntake] = useState(averageSample);
+  // const [averageFoodWaste, setFoodWaste] = useState(averageSample);
+  // const [averageDiversity, setAverageDiversity] = useState(averageSample);
+  const [averageValue, setAverageValue] = useState(averageSample);
+  const [chartData, setChartData] = useState(chart_sampledata);
+  const [barChartData, setBarChartData] = useState(bar_sampledata);
+  const [leaderboardData, setLeaderboardData] = useState(peopleData);
 
   const handleOverviewIntervalChange = (interval) => {
     setOverviewInterval(interval);
+
+    let newAverageValue = averageSample;
+    let newChartData = chart_sampledata;
+    let newBarChartData = bar_sampledata;
+
+    if (interval === "weekly") {
+      newAverageValue = averageSample2;
+      newChartData = chart_sampledata2;
+      newBarChartData = bar_sampledata2;
+    } else if (interval === "monthly") {
+      newAverageValue = averageSample3;
+      newChartData = chart_sampledata3;
+      newBarChartData = bar_sampledata3;
+    }
+    setAverageValue(newAverageValue);
+    setChartData(newChartData);
+    setBarChartData(newBarChartData);
   };
 
   const handleLeaderboardIntervalChange = (interval) => {
     setLeaderboardInterval(interval);
+
+    let newLeaderboard = peopleData;
+
+    if (interval === "weekly") {
+      newLeaderboard = peopleDataWeekly;
+    } else if (interval === "monthly") {
+      newLeaderboard = peopleDataMonthly;
+    }
+    setLeaderboardData(newLeaderboard);
   };
 
   return (
@@ -109,28 +206,28 @@ const Dashboard = () => {
                 <AvgCard
                   icon={<GiHealthIncrease />}
                   label="Avg. HALE"
-                  value={averageSteps}
+                  value={averageValue}
                 />
               </Col>
               <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                 <AvgCard
                   icon={<FaPlateWheat />}
                   label="Avg. PHD"
-                  value={averageSleep}
+                  value={averageValue}
                 />
               </Col>
               <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                 <AvgCard
                   icon={<FaWalking />}
                   label="Avg. Steps"
-                  value={averageSleep}
+                  value={averageValue}
                 />
               </Col>
               <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                 <AvgCard
                   icon={<FaBed />}
                   label="Avg. Hours of Sleep"
-                  value={averageSleep}
+                  value={averageValue}
                 />
               </Col>
             </Row>
@@ -140,21 +237,21 @@ const Dashboard = () => {
                 <AvgCard
                   icon={<FaGlassWater />}
                   label="Avg. Water Intake"
-                  value={averageSleep}
+                  value={averageValue}
                 />
               </Col>
               <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                 <AvgCard
                   icon={<FaTrashCan />}
                   label="Avg. Food Waste"
-                  value={averageSleep}
+                  value={averageValue}
                 />
               </Col>
               <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                 <AvgCard
                   icon={<FaNutritionix />}
                   label="Avg. Diversity"
-                  value={averageSleep}
+                  value={averageValue}
                 />
               </Col>
             </Row>
@@ -167,7 +264,7 @@ const Dashboard = () => {
                   value={
                     <Chart
                       chartType="PieChart"
-                      data={chart_sampledata}
+                      data={chartData}
                       width={"100%"}
                       height={"400px"}
                     />
@@ -183,7 +280,7 @@ const Dashboard = () => {
                       chartType="Bar"
                       width="100%"
                       height="400px"
-                      data={bar_sampledata}
+                      data={barChartData}
                     />
                   }
                 />
@@ -208,7 +305,7 @@ const Dashboard = () => {
               />
             </div>
 
-            <LeaderboardsTable data={peopleData} />
+            <LeaderboardsTable data={leaderboardData} />
           </Col>
         </Row>
       </Container>
