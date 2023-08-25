@@ -5,6 +5,7 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
     const newMeal = new Meal({
         uid: req.body.uid, 
         dailyid: req.body.dailyid,
+        datetime: req.body.datetime,
         cal: req.body.cal,
         fat: req.body.fat,
         carbs: req.body.carbs,
