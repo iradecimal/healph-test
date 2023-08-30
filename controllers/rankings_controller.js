@@ -7,7 +7,7 @@ exports.dailyRankings = asyncHandler(async (req, res, next) => {
     dailydate.setDate(dailydate.getDate()-1);
 
     const rankings = await Daily_Intake.aggregate([//only accept intakes that were submitted
-        {$match: {date: dailydate}},
+        {'$match': {date: dailydate}},
         {'$sort': {'hale': -1}}, 
         {'$lookup': {
             'from': 'users',
@@ -68,7 +68,7 @@ exports.monthlyRankings = asyncHandler(async (req, res, next) => {
         month_date.push(dailydate.toISOString().slice(0,7));
     
     const rankings = await Daily_Intake.aggregate([ //only accept intakes that were submitted
-        {$match: {$expr: { $eq: [month, {$substrCP: [ "$date", 0, 7]} ]  } } },
+        {'$match': {$expr: { $eq: [month, {$substrCP: [ "$date", 0, 7]} ]  } } },
         {'$group': {
             '_id': '$uid', 
             'hale': {'$sum': '$hale'}, 
