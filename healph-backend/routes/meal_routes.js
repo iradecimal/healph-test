@@ -8,7 +8,7 @@ const Auth = require('../auth/auth_token_handler.js');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, '../mealpics');
+        cb(null, '/mealpics');
     },
     filename: function(req, file, cb){
         console.log(file);
@@ -18,14 +18,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 router.post("/new", Auth.userAuth, MealController.newMeal);
 router.get("/get/:oid", Auth.userAuth, MealController.getMeal);
 router.post("/upload/:oid", Auth.userAuth, upload.single("image"), function (req, res){
     console.log(req.file);
     res.send("Single File upload success");
 });
-
-//router.get("/getall", Auth.adminAuth, MealController.getallmeals);
 
 module.exports = router;

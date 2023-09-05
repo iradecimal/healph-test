@@ -10,6 +10,4 @@ router.patch("/update/:oid", Auth.userAuth, ReportController.updateReport);
 router.patch("/flag/:oid", Auth.userAuth, ReportController.flagReport);
 router.delete("/delete/:oid", Auth.userAuth, ReportController.deleteReport);
 
-//router.get("/getall", Auth.adminAuth, ReportController.getallreports);
-
 module.exports = router;
