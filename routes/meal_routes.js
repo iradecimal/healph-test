@@ -8,7 +8,7 @@ const Auth = require('../auth/auth_token_handler.js');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, '/mealpics');
+        cb(null, './mealpics');
     },
     filename: function(req, file, cb){
         console.log(file);
