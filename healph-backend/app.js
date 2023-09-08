@@ -22,7 +22,7 @@ const app = express();
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
-const dev_db_url = 
+const dev_db_url =
 "mongodb+srv://testadmin:MaDFhk14d6RNVcjo@cluster0.9fuqzsp.mongodb.net/healph";
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 

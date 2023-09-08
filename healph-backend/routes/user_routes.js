@@ -8,7 +8,7 @@ const Auth = require('../auth/auth_token_handler.js');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, '../profpics');
+        cb(null, './profpics');
     },
     filename: function(req, file, cb){
         console.log(file);
@@ -21,7 +21,10 @@ const upload = multer({ storage: storage });
 router.post("/signup", UserController.signup);
 router.post("/login", UserController.login);
 router.get("/logout", Auth.userAuth, UserController.logout);
-router.post("/upload-pic/:uid", Auth.userAuth,  upload.single("image"), UserController.uploadPicture);
+router.post("/upload-pic/:uid", Auth.userAuth,  upload.single("image"), function (req, res){
+    console.log(req.file);
+    res.send("Single File upload success");
+});
 router.get("/get-user/:uid", Auth.userAuth, UserController.getUser);
 router.get("/get-full-name/:uid", Auth.userAuth, UserController.getFullName);
 router.get("/get-pic/:uid", Auth.userAuth, UserController.getProfilePicture);
