@@ -7,7 +7,7 @@ exports.dailyRankings = asyncHandler(async (req, res, next) => {
     dailydate.setDate(dailydate.getDate()-1);
 
     const rankings = await Daily_Intake.aggregate([//only accept intakes that were submitted
-        {'$match': {date: dailydate}},
+        {$match: {date: dailydate}},
         {'$sort': {'hale': -1}}, 
         {'$lookup': {
             'from': 'users',
@@ -27,14 +27,18 @@ exports.dailyRankings = asyncHandler(async (req, res, next) => {
 });
 
 exports.weeklyRankings = asyncHandler(async (req, res, next) => {
-    let startdate = new Date();
-    let lastdate = new Date();
+    let week_date = new Array();
+
+    let dailydate = new Date();
     
-    startdate.setDate(startdate.getDate() - 1);
-    lastdate.setDate(lastdate.getDate() - 8);
-    console.log(startdate, lastdate);
+    for (let i = 1; i <= 7; i++){
+        dailydate.setDate(dailydate.getDate() - 1);
+        week_date.push(dailydate.toISOString().slice(0,10));
+    }
     const rankings = await Daily_Intake.aggregate([ //only accept intakes that were submitted
-        {'$match': {'date':{ $lte: startdate.toISOString().slice(0,10), $gte: lastdate.toISOString().slice(0,10)}}},
+        {$match: {$or: [ //match for the whole week
+            {date: date1},{date: date2},{date: date3},{date: date4},
+            {date: date5},{date: date6},{date: date7}]}},
         {'$group': {
             '_id': '$uid', 
             'hale': {'$sum': '$hale'}, 
@@ -57,7 +61,6 @@ exports.weeklyRankings = asyncHandler(async (req, res, next) => {
         
     res.status(200).send(rankings);
 });
-
 //monthly rankings
 exports.monthlyRankings = asyncHandler(async (req, res, next) => {
     let month_date = new Array();
@@ -68,7 +71,7 @@ exports.monthlyRankings = asyncHandler(async (req, res, next) => {
         month_date.push(dailydate.toISOString().slice(0,7));
     
     const rankings = await Daily_Intake.aggregate([ //only accept intakes that were submitted
-        {'$match': {$expr: { $eq: [month, {$substrCP: [ "$date", 0, 7]} ]  } } },
+        {$match: {$expr: { $eq: [month, {$substrCP: [ "$date", 0, 7]} ]  } } },
         {'$group': {
             '_id': '$uid', 
             'hale': {'$sum': '$hale'}, 

@@ -53,3 +53,13 @@ exports.deleteReport = asyncHandler(async (req, res, next) => {
     res.status(200).send("Success");
 });
 
+
+exports.getallreports = asyncHandler(async (req, res, next) => {
+    Report.find()
+    .then(reports => {
+        res.status(200).json(reports)
+    })
+    .catch(err => {
+        res.status(404).send("Reports cannot be found");
+    })
+});

@@ -5,7 +5,6 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
     const newMeal = new Meal({
         uid: req.body.uid, 
         dailyid: req.body.dailyid,
-        datetime: req.body.datetime,
         cal: req.body.cal,
         fat: req.body.fat,
         carbs: req.body.carbs,
@@ -38,4 +37,14 @@ exports.getMeal = asyncHandler(async (req, res, next) => {
 
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
     console.log(req.body, req.files)
+});
+
+exports.getallmeals = asyncHandler(async (req, res, next) => {
+    Meal.find()
+    .then(meals => {
+        res.status(200).json(meals)
+    })
+    .catch(err => {
+        res.status(404).send("Meals cannot be found");
+    })
 });

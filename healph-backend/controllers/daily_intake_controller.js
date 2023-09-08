@@ -5,11 +5,10 @@ require('mongoose').Promise = global.Promise
 
 //create a new empty intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
-    const newDate = new Date(req.body.date);
-    console.log(newDate.getTimezoneOffset());
+    const newDate = new Date();
     const newIntake = new Intake({
         uid: req.params.uid, 
-        date: "2023/08/25",
+        date: newDate.toISOString().slice(0,10),
         sleephrs: req.body.hoursOfSleep,
         waterglass: req.body.glassesOfWater,
         dailycal: req.body.dailyCalories,
