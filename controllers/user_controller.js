@@ -109,7 +109,7 @@ exports.getProfilePicture = asyncHandler(async (req, res, next) => {
         res.status(404).send("Meal cannot be found");
     }
     console.log('/profpics/' + req.params.uid + ".jpg");
-    res.status(200).sendFile(req.params.uid + ".jpg", {root: '../profpics'});
+    res.status(200).sendFile(req.params.uid + ".jpg", {root: './profpics'});
 });
 
 exports.getUserAge = asyncHandler(async (req, res, next) => {
