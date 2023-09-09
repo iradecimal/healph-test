@@ -1,7 +1,7 @@
 import { Form, Button, Card, InputGroup } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./loginform.css";
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -12,39 +12,45 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const nav = useNavigate();
 
-  async function handleLoginSubmit(event){
+  async function handleLoginSubmit(event) {
     event.preventDefault();
-    try{
-      await axios.post("http://localhost:3000/users/login",{
-        email: email,
-        password: password
-      })
-      .then(res=>{
-        nav('/dashboard')
-      })
-      .catch(err=>{
-        console.log(err);
-      })
-    }
-    catch(err){
+    try {
+      await axios
+        .post("http://localhost:3000/users/login", {
+          email: email,
+          password: password,
+        })
+        .then((res) => {
+          nav("/dashboard");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
       console.log(err);
     }
-    try{
-      await axios.post("http://localhost:3000/admins/login",{
-        email: email,
-        password: password
-      })
-      .then(res=>{
-        nav('/dashboard')
-      })
-      .catch(err=>{
-        console.log(err);
-      })
+    try {
+      await axios
+        .post(
+          "http://localhost:3000/admins/login",
+          {
+            email: email,
+            password: password,
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          nav("/dashboard");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
     }
-      catch(err){
-        console.log(err);
-      }
-  };
+  }
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -82,14 +88,6 @@ const LoginForm = () => {
 
           <Form.Group style={{ marginBottom: "10px" }}>
             <Form.Label>Password</Form.Label>
-            <span style={{ fontSize: "16px", marginLeft: "130px" }}>
-              <a
-                href="https://www.youtube.com/watch?v=VZrDxD0Za9I"
-                style={{ color: "#9FC856" }}
-              >
-                Forgot Password?
-              </a>
-            </span>
             <InputGroup style={{ width: "350px" }}>
               <Form.Control
                 type={showPassword ? "text" : "password"}
