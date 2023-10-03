@@ -3,14 +3,9 @@ FROM node:18-alpine
 WORKDIR /healph-frontend/
 #extracts to /healph/frontend except node_modules
 #    from        to
-COPY package*.json ./
-COPY package-lock*.json ./
-COPY *.env ./
-COPY public/ ./public
-COPY src/ ./src
-
+COPY . ./
 EXPOSE 5000
 RUN npm install
 #    from    to
-CMD ["npm", "start"]
+CMD ["npm", "run", "build"]
 #change if necessary

@@ -18,7 +18,6 @@ const userSchema = new Schema({
   },
   sex: {type: String, required: true},
   bday: { type: String, required: true, minLength: 9 ,maxLength: 11 },
-  pic: { type: String, default: '' }, //to deprecate
   loc: { region: String, town: String },
   uni: { type: String, required: true },
   deg: { type: String, required: true },

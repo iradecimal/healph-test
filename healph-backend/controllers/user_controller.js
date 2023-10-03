@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user.js');
+const path = require("node:path");
 const jwt = require('jsonwebtoken');
 
 const maxAge = 28 * 24 * 60 * 60;
@@ -103,20 +104,23 @@ exports.getFullName = asyncHandler(async (req, res, next) => {
 });
 
 exports.getProfilePicture = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.params.uid).select('pic').exec();
+    const user = await User.findById(req.params.uid).exec();
 
     if (user === null) {
-        res.status(404).send("Meal cannot be found");
+        res.status(404).send("User cannot be found");
     }
+    const options = {
+        root: path.join(__dirname, '../profpics')
+    };
     console.log('/profpics/' + req.params.uid + ".jpg");
-    res.status(200).sendFile(req.params.uid + ".jpg", {root: '../profpics'});
+    res.status(200).sendFile( "1" + ".jpg", options);
 });
 
 exports.getUserAge = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.params.uid).exec();
 
     if (user === null) {
-        res.status(404).send("Meal cannot be found");
+        res.status(404).send("User cannot be found");
     }
 
     const query = user.age;
