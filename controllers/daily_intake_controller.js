@@ -9,7 +9,7 @@ exports.newDailyIntake = asyncHandler(async (req, res, next) => {
     console.log(newDate.getTimezoneOffset());
     const newIntake = new Intake({
         uid: req.params.uid, 
-        date: "2023/08/25",
+        date: req.params.date,
         sleephrs: req.body.hoursOfSleep,
         waterglass: req.body.glassesOfWater,
         dailycal: req.body.dailyCalories,
