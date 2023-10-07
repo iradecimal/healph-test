@@ -5,9 +5,10 @@ const Meal = require('../models/meal.js');
 exports.dailyRankings = asyncHandler(async (req, res, next) => {
     const dailydate = new Date();
     dailydate.setDate(dailydate.getDate()-1);
+    console.log(dailydate.toISOString().slice(0,10));
 
     const rankings = await Daily_Intake.aggregate([//only accept intakes that were submitted
-        {'$match': {date: dailydate}},
+        {'$match': {date: dailydate.toISOString().slice(0,10)}},
         {'$sort': {'hale': -1}}, 
         {'$lookup': {
             'from': 'users',
