@@ -155,11 +155,17 @@ exports.getIntakeStatsWeekly = asyncHandler(async (req, res, next) => {
 });
 
 exports.getMealStatsDaily = asyncHandler(async (req, res, next) => {
-    let dailydate = new Date();
-    dailydate.setDate(dailydate.getDate()-1);
+    let startdate = new Date();
+    let lastdate = new Date();
+    startdate.setDate(startdate.getDate()-1);
+    startdate.setHours(0,0,0,0);
+    lastdate.setDate(lastdate.getDate()-2);
+    lastdate.setHours(0,0,0,0);
 
-    const dailystats = await Daily_Intake.aggregate([
-        {'$match': {date: dailydate.toISOString().slice(0,10)}},
+    console.log(startdate.toISOString().slice(0,10), lastdate.toISOString().slice(0,10));
+    const dailystats = await Meal.aggregate([
+
+        {'$match': {'datetime': { $lt: startdate, $gte: lastdate}}},
         {'$group': {
             _id: null,
             'fat': {'$avg': '$fat'},
@@ -175,12 +181,14 @@ exports.getMealStatsDaily = asyncHandler(async (req, res, next) => {
 exports.getMealStatsWeekly = asyncHandler(async (req, res, next) => {
     let startdate = new Date();
     let lastdate = new Date();
-    
-    startdate.setDate(startdate.getDate() - 1);
-    lastdate.setDate(lastdate.getDate() - 8);
+    startdate.setDate(startdate.getDate()-1);
+    startdate.setHours(0,0,0,0);
+    lastdate.setDate(lastdate.getDate()-8);
+    lastdate.setHours(0,0,0,0);
+
     console.log(startdate, lastdate);
-    const weeklystats = await Daily_Intake.aggregate([
-        {'$match': {'date':{ $lte: startdate.toISOString().slice(0,10), $gte: lastdate.toISOString().slice(0,10)}}},
+    const weeklystats = await Meal.aggregate([
+        {'$match': {'datetime':{ $lt: startdate, $gte: lastdate}}},
         {'$group': {
             _id: null,
             'fat': {'$avg': '$fat'},
