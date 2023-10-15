@@ -115,9 +115,10 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 
 exports.getIntakeStatsDaily = asyncHandler(async (req, res, next) => {
     let dailydate = new Date();
+    dailydate.setDate(dailydate.getDate()-1);
 
     const dailystats = await Daily_Intake.aggregate([
-        {'$match': {date: dailydate}},
+        {'$match': {date: dailydate.toISOString().slice(0,10)}},
         {'$group': {
             _id: null,
             'hale': {'$avg': '$hale'},
@@ -132,19 +133,14 @@ exports.getIntakeStatsDaily = asyncHandler(async (req, res, next) => {
 });
 
 exports.getIntakeStatsWeekly = asyncHandler(async (req, res, next) => {
-    let week_date = new Array();
-
-    let dailydate = new Date();
+    let startdate = new Date();
+    let lastdate = new Date();
     
-    for (let i = 1; i <= 7; i++){
-        dailydate.setDate(dailydate.getDate() - 1);
-        week_date.push(dailydate.toISOString().slice(0,10));
-    }
-
+    startdate.setDate(startdate.getDate() - 1);
+    lastdate.setDate(lastdate.getDate() - 8);
+    console.log(startdate, lastdate);
     const weeklystats = await Daily_Intake.aggregate([
-        {'$match': {'$or': [ //match for the whole week
-            {date: date1},{date: date2},{date: date3},{date: date4},
-            {date: date5},{date: date6},{date: date7}]}},
+        {'$match': {'date':{ $lte: startdate.toISOString().slice(0,10), $gte: lastdate.toISOString().slice(0,10)}}},
         {'$group': {
             _id: null,
             'hale': {'$avg': '$hale'},
@@ -160,9 +156,10 @@ exports.getIntakeStatsWeekly = asyncHandler(async (req, res, next) => {
 
 exports.getMealStatsDaily = asyncHandler(async (req, res, next) => {
     let dailydate = new Date();
+    dailydate.setDate(dailydate.getDate()-1);
 
     const dailystats = await Daily_Intake.aggregate([
-        {'$match': {date: dailydate}},
+        {'$match': {date: dailydate.toISOString().slice(0,10)}},
         {'$group': {
             _id: null,
             'fat': {'$avg': '$fat'},
@@ -176,20 +173,14 @@ exports.getMealStatsDaily = asyncHandler(async (req, res, next) => {
 });
 
 exports.getMealStatsWeekly = asyncHandler(async (req, res, next) => {
-    let week_date = new Array();
-
-    let dailydate = new Date();
+    let startdate = new Date();
+    let lastdate = new Date();
     
-    for (let i = 1; i <= 7; i++){
-        dailydate.setDate(dailydate.getDate() - 1);
-        week_date.push(dailydate.toISOString().slice(0,10));
-    }
-
-
+    startdate.setDate(startdate.getDate() - 1);
+    lastdate.setDate(lastdate.getDate() - 8);
+    console.log(startdate, lastdate);
     const weeklystats = await Daily_Intake.aggregate([
-        {'$match': {'$or': [ //match for the whole week
-            {date: date1},{date: date2},{date: date3},{date: date4},
-            {date: date5},{date: date6},{date: date7}]}},
+        {'$match': {'date':{ $lte: startdate.toISOString().slice(0,10), $gte: lastdate.toISOString().slice(0,10)}}},
         {'$group': {
             _id: null,
             'fat': {'$avg': '$fat'},
@@ -207,7 +198,7 @@ exports.dailyRankings = asyncHandler(async (req, res, next) => {
     dailydate.setDate(dailydate.getDate()-1);
 
     const rankings = await Daily_Intake.aggregate([//only accept intakes that were submitted
-        {$match: {date: dailydate}},
+        {$match: {date: dailydate.toISOString().slice(0,10)}},
         {'$sort': {'hale': -1}}, 
         {'$lookup': {
             'from': 'users',
