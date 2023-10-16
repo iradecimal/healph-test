@@ -231,35 +231,35 @@ const Dashboard = () => {
                       <AvgCard
                         icon={<GiHealthIncrease />}
                         label="Avg. HALE"
-                        value={stat.hale.toFixed(4)}
+                        value={stat.hale.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaPlateWheat />}
                         label="Avg. PHD"
-                        value={stat.phd.toFixed(4)}
+                        value={stat.phd.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaWalking />}
                         label="Avg. Steps"
-                        value={stat.steps.toFixed(4)}
+                        value={stat.steps.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaBed />}
                         label="Avg. Hours of Sleep"
-                        value={stat.sleephrs.toFixed(4)}
+                        value={stat.sleephrs.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaGlassWater />}
                         label="Avg. Water Intake"
-                        value={stat.waterglass.toFixed(4)}
+                        value={stat.waterglass.toFixed(2)}
                       />
                     </Col>
                   </Row>
@@ -281,35 +281,35 @@ const Dashboard = () => {
                       <AvgCard
                         icon={<GiMeat />}
                         label="Fats"
-                        value={stat.fat}
+                        value={stat.fat.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaBreadSlice />}
                         label="Carbohydrates"
-                        value={stat.carbs}
+                        value={stat.carbs.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<GiChickenLeg />}
                         label="Proteins"
-                        value={stat.proteins}
+                        value={stat.proteins.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaHamburger />}
                         label="Calories"
-                        value={stat.cal}
+                        value={stat.cal.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaTrashCan />}
                         label="Avg. Food Waste"
-                        value={stat.waste}
+                        value={stat.waste.toFixed(2)}
                       />
                     </Col>
                   </Row>
