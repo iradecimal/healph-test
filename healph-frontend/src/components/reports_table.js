@@ -1,274 +1,306 @@
-import React, { useState, useEffect } from "react";
-import { Table, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
-import "./dailyintaketable.css";
+import React, { useState, useEffect, useCallback } from "react";
+import { Table, Tooltip, OverlayTrigger, Spinner, Form } from "react-bootstrap";
 import ItemsPagination from "./pagination";
+import axios from "axios";
 import DatePicker from "react-datepicker";
-import ConfirmationModal from "./confirmationModal";
 import "react-datepicker/dist/react-datepicker.css";
 
-const ReportsTable = ({ data, onStatusChange }) => {
-  const [sortedColumn, setSortedColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [ReportIdFilter, setReportIdFilter] = useState("");
+const ReportsTable = () => {
+  const [reportsTable, setReportsTable] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState(1);
+
+  // State variables for filter criteria
+  const [reportIdFilter, setReportIdFilter] = useState("");
+  const [userIdFilter, setUserIdFilter] = useState("");
   const [startDateFilter, setStartDateFilter] = useState(null);
   const [endDateFilter, setEndDateFilter] = useState(null);
-  const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
-  const [DetailsFilter, setDetailsFilter] = useState("");
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [detailsFilter, setDetailsFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
-  const [localData, setLocalData] = useState(data);
+  const fetchData = useCallback(
+    (page, limit) => {
+      const filters = [];
 
-  const [showModal, setShowModal] = useState(false);
+      if (reportIdFilter) {
+        filters.push(`_id[lte]=${reportIdFilter}`);
+      }
 
-  const openModal = (itemIndex) => {
-    setShowModal(true);
-  };
+      if (userIdFilter) {
+        filters.push(`uid[lte]=${userIdFilter}`);
+      }
 
-  const closeModal = () => {
-    setShowModal(false);
-  };
+      if (startDateFilter) {
+        filters.push(
+          `datetime[gte]=${startDateFilter.toLocaleDateString("en-CA")}`
+        );
+      }
+
+      if (endDateFilter) {
+        filters.push(
+          `datetime[lte]=${endDateFilter.toLocaleDateString("en-CA")}`
+        );
+      }
+
+      if (typeFilter) {
+        filters.push(`reptype[lte]=${typeFilter}`);
+      }
+
+      if (detailsFilter) {
+        filters.push(`det[lte]=${detailsFilter}`);
+      }
+
+      if (statusFilter !== "") {
+        filters.push(`status=${statusFilter === "Fixed" ? "true" : "false"}`);
+      }
+
+      const filtersParam = filters.length > 0 ? filters.join("&") : "";
+
+      const sortParam = sortField
+        ? `sort=${sortDirection === 1 ? sortField : `-${sortField}`}`
+        : "";
+
+      const queryParams = [sortParam, filtersParam].filter(Boolean).join("&");
+
+      setLoading(true);
+
+      axios
+        .get(
+          `http://localhost:3000/dashboard/reports/${page}/${limit}?${queryParams}`
+        )
+        .then((response) => {
+          console.log(response.data);
+          setReportsTable(response.data.docs);
+          setLoading(false);
+          setCurrentPage(response.data.page);
+          setTotalPages(response.data.totalPages);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    },
+    [
+      sortDirection,
+      sortField,
+      reportIdFilter,
+      userIdFilter,
+      startDateFilter,
+      endDateFilter,
+      typeFilter,
+      detailsFilter,
+      statusFilter,
+    ]
+  );
 
   useEffect(() => {
-    setLocalData(data);
-  }, [data]);
+    const page = 1;
+    const limit = 20;
+    fetchData(page, limit);
+  }, [fetchData]);
 
-  const handleStatusChangeLocal = (itemIndex) => {
-    onStatusChange(itemIndex);
-  };
-
-  const handleSort = (column, event) => {
-    if (event.target.nodeName === "INPUT") {
-      return;
-    }
-
-    if (sortedColumn === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortedColumn(column);
-      setSortOrder("asc");
+  const handlePageChange = (newPage) => {
+    const limit = 20;
+    if (newPage >= 1 && newPage <= totalPages) {
+      fetchData(newPage, limit);
     }
   };
 
-  const sortedData = localData.slice().sort((a, b) => {
-    if (sortOrder === "asc") {
-      return a[sortedColumn] > b[sortedColumn] ? 1 : -1;
-    } else {
-      return a[sortedColumn] < b[sortedColumn] ? 1 : -1;
+  const handleSort = (field, e) => {
+    if (e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") {
+      const limit = 20;
+      if (field === sortField) {
+        setSortDirection(sortDirection === 1 ? -1 : 1);
+      } else {
+        setSortDirection(1);
+      }
+      setSortField(field);
+      fetchData(currentPage, limit);
     }
-  });
-
-  //Filtering through frontend(as of now)
-
-  const handleReportIdFilterChange = (event) => {
-    setReportIdFilter(event.target.value);
   };
-
-  const handleStartDateFilterChange = (date) => {
-    setStartDateFilter(date);
-  };
-
-  const handleEndDateFilterChange = (date) => {
-    setEndDateFilter(date);
-  };
-
-  const handleTypeFilterChange = (event) => {
-    setSelectedTypeFilter(event.target.value);
-  };
-
-  const handleStatusFilterChange = (event) => {
-    setSelectedStatusFilter(event.target.value);
-  };
-
-  const handleDetailsFilterChange = (event) => {
-    setDetailsFilter(event.target.value);
-  };
-
-  const filteredData = sortedData.filter((item) => {
-    return (
-      (startDateFilter === null ||
-        item.RecordDate >= startDateFilter.toLocaleDateString("en-GB")) &&
-      (endDateFilter === null ||
-        item.RecordDate <= endDateFilter.toLocaleDateString("en-GB")) &&
-      (DetailsFilter === "" ||
-        item.Details.toLowerCase().includes(DetailsFilter.toLowerCase())) &&
-      (selectedTypeFilter === "" ||
-        item.Type.toString() === selectedTypeFilter) &&
-      (ReportIdFilter === "" || item.ReportId.toString() === ReportIdFilter) &&
-      (selectedStatusFilter === "" ||
-        item.Status.toString() === selectedStatusFilter)
-    );
-  });
-
-  //pagination through frontend (as of now)
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const page_items = 15;
-  const totalPages = Math.ceil(filteredData.length / page_items);
-  const startIndex = (currentPage - 1) * page_items;
-  const endIndex = startIndex + page_items;
-  const currentData = filteredData.slice(startIndex, endIndex);
-
-  const handlePageChange = (pageNum) => {
-    setCurrentPage(pageNum);
-  };
-
   const renderTooltip = (text) => <Tooltip id="tooltip">{text}</Tooltip>;
 
   return (
     <div>
-      <ItemsPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      <div>
+        <ItemsPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
       <div style={{ maxWidth: "100%", overflowX: "auto" }}>
-        <Table
-          striped
-          bordered
-          hover
-          style={{ borderColor: "#9FC856" }}
-          size="sm"
-        >
-          <thead>
-            <tr>
-              <th onClick={(event) => handleSort("ReportId", event)}>
-                Report ID
-                <br />
-                <Form.Control
-                  type="text"
-                  value={ReportIdFilter}
-                  onChange={handleReportIdFilterChange}
-                  placeholder="Filter"
-                  style={{ width: "100px" }}
-                />
-              </th>
-              <th onClick={(event) => handleSort("RecordDate", event)}>
-                Date
-                <br />
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <div>Start Date:</div>
-                  <DatePicker
-                    selected={startDateFilter}
-                    onChange={handleStartDateFilterChange}
-                    dateFormat="yyyy-MM-dd"
-                    placeholderText="Select Start Date"
-                  />
-                </div>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <div>End Date:</div>
-                  <DatePicker
-                    selected={endDateFilter}
-                    onChange={handleEndDateFilterChange}
-                    dateFormat="yyyy-MM-dd"
-                    placeholderText="Select End Date"
-                  />
-                </div>
-              </th>
-              <th>
-                Type
-                <br />
-                <Form.Control
-                  as="select"
-                  value={selectedTypeFilter}
-                  onChange={handleTypeFilterChange}
+        {loading ? (
+          <Spinner
+            animation="border"
+            role="status"
+            style={{ color: "#9FC856" }}
+          />
+        ) : (
+          <Table striped bordered hover style={{ borderColor: "#9FC856" }}>
+            <thead>
+              <tr>
+                <th onClick={(e) => handleSort("_id", e)}>
+                  Report ID
+                  <div>
+                    <Form.Control
+                      type="text"
+                      placeholder="Filter"
+                      value={reportIdFilter}
+                      onChange={(e) => setReportIdFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("uid", e)}>
+                  User ID
+                  <div>
+                    <Form.Control
+                      type="text"
+                      placeholder="Filter"
+                      value={userIdFilter}
+                      onChange={(e) => setUserIdFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th
+                  onClick={(e) => {
+                    if (e.currentTarget === e.target) {
+                      handleSort("datetime", e);
+                    }
+                  }}
                 >
-                  <option value="">All</option>
-                  <option value={0}>0</option>
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
-                </Form.Control>
-              </th>
-
-              <th>
-                Details
-                <br />
-                <Form.Control
-                  type="text"
-                  value={DetailsFilter}
-                  onChange={handleDetailsFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-
-              <th>
-                Status
-                <br />
-                <Form.Control
-                  as="select"
-                  value={selectedStatusFilter}
-                  onChange={handleStatusFilterChange}
-                >
-                  <option value="">All</option>
-                  <option value="0">Not Fixed</option>
-                  <option value="1">Fixed</option>
-                </Form.Control>
-              </th>
-            </tr>
-          </thead>
-          <tbody style={{ backgroundColor: "black" }}>
-            {currentData.map((item, index) => (
-              <tr key={index}>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Report ID: ${item.ReportId}`)}
-                  >
-                    <div>{item.ReportId}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Date: ${item.RecordDate}`)}
-                  >
-                    <div>{item.RecordDate}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Type: ${item.Type}`)}
-                  >
-                    <div>{item.Type}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Details: ${item.Details}`)}
-                  >
-                    <div>{item.Details}</div>
-                  </OverlayTrigger>
-                </td>
-
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(
-                      `Status: ${item.Status === 0 ? "Not Fixed" : "Fixed"}`
-                    )}
-                  >
-                    <div
-                      className={`status-shape ${
-                        item.Status === 0 ? "red" : "green"
-                      }`}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => openModal(index)}
+                  Date
+                  <div>
+                    <DatePicker
+                      selected={startDateFilter}
+                      onChange={(date) => setStartDateFilter(date)}
+                      selectsStart
+                      startDate={startDateFilter}
+                      endDate={endDateFilter}
+                      dateFormat="yyyy-MM-dd"
+                      placeholderText="Start Date"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <DatePicker
+                      selected={endDateFilter}
+                      onChange={(date) => setEndDateFilter(date)}
+                      selectsEnd
+                      startDate={startDateFilter}
+                      endDate={endDateFilter}
+                      dateFormat="yyyy-MM-dd"
+                      placeholderText="End Date"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("reptype", e)}>
+                  Type
+                  <div>
+                    <Form.Control
+                      type="text"
+                      placeholder="Filter"
+                      value={typeFilter}
+                      onChange={(e) => setTypeFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("det", e)}>
+                  Details
+                  <div>
+                    <Form.Control
+                      type="text"
+                      placeholder="Filter"
+                      value={detailsFilter}
+                      onChange={(e) => setDetailsFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("status", e)}>
+                  <div>
+                    Status
+                    <Form.Control
+                      as="select"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
                     >
-                      {item.Status === 0 ? "Not Fixed" : "Fixed"}
-                    </div>
-                  </OverlayTrigger>
-                </td>
-                <ConfirmationModal
-                  show={showModal}
-                  onClose={closeModal}
-                  onConfirm={handleStatusChangeLocal}
-                  item={{ index, Status: item.Status }}
-                />
+                      <option value="">All</option>
+                      <option value="Fixed">Fixed</option>
+                      <option value="NotFixed">Not Fixed</option>
+                    </Form.Control>
+                  </div>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody style={{ backgroundColor: "black" }}>
+              {reportsTable.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Report ID: ${item._id}`)}
+                    >
+                      <div>{item._id}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`User ID: ${item.uid}`)}
+                    >
+                      <div>{item.uid}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Date: ${item.datetime}`)}
+                    >
+                      <div>{item.datetime}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Type: ${item.reptype}`)}
+                    >
+                      <div>{item.reptype}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Details: ${item.det}`)}
+                    >
+                      <div>{item.det}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(
+                        `Status: ${
+                          item.status === false ? "Not Fixed" : "Fixed"
+                        }`
+                      )}
+                    >
+                      <div
+                        className={`status-shape ${
+                          item.status === false ? "red" : "green"
+                        }`}
+                      >
+                        {item.status === false ? "Not Fixed" : "Fixed"}
+                      </div>
+                    </OverlayTrigger>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </div>
     </div>
   );

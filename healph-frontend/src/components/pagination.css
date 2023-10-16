@@ -1,9 +1,8 @@
 .pagination {
-    color:  #9FC856; 
-}
-  
-.pagination .page-link {
-    color:  #9FC856;
-    border-color:  #9FC856;
+  color: #9fc856;
 }
 
+.pagination .page-link {
+  color: #9fc856;
+  border-color: #9fc856;
+}

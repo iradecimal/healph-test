@@ -11,7 +11,7 @@ const ConfirmationModal = ({ show, onClose, onConfirm, item }) => {
       </Modal.Header>
       <Modal.Body>
         Are you sure you want to change the status to{" "}
-        {item?.Status === 0 ? "Fixed" : "Not Fixed"}?
+        {item?.Status === false ? "Fixed" : "Not Fixed"}?
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
@@ -20,7 +20,7 @@ const ConfirmationModal = ({ show, onClose, onConfirm, item }) => {
         <Button
           style={{ backgroundColor: "#9fc856", borderColor: "#9fc856" }}
           onClick={() => {
-            onConfirm(item.index);
+            onConfirm(item.status);
             onClose();
           }}
         >

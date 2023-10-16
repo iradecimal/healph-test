@@ -1,35 +1,34 @@
 import React from "react";
-import { Nav, Image, Dropdown } from "react-bootstrap";
+import { Nav, Image } from "react-bootstrap";
 import { FaHome, FaUtensils, FaClipboard } from "react-icons/fa";
 import { MdReport } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
-
-import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios";
 import { useLocation } from "react-router-dom";
 import "./sidebar.css";
 
 const Sidebar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  async function handleLogoutSubmit(event) {
-    event.preventDefault();
-    try {
-      console.log("Logout button clicked");
-      const response = await axios.get("http://localhost:3000/admins/logout", {
-        withCredentials: true, // Include credentials
-      });
+  // async function handleLogoutSubmit(event) {
+  //   event.preventDefault();
+  //   try {
+  //     console.log("Logout button clicked");
+  //     const response = await axios.get("http://localhost:3000/admins/logout", {
+  //       withCredentials: true, // Include credentials
+  //     });
 
-      if (response.status === 200) {
-        console.log("Logout request successful");
-        navigate("/");
-      } else {
-        console.log("Logout request failed");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  //     if (response.status === 200) {
+  //       console.log("Logout request successful");
+  //       navigate("/");
+  //     } else {
+  //       console.log("Logout request failed");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
   return (
     <div>
@@ -75,7 +74,7 @@ const Sidebar = () => {
           </Nav.Link>
         </Nav.Item>
       </Nav>
-
+      {/* 
       <Dropdown
         drop="up"
         className="sidebar-dropdown col-md-2 flex-column d-none d-md-block"
@@ -97,7 +96,7 @@ const Sidebar = () => {
         <Dropdown.Menu>
           <Dropdown.Item onClick={handleLogoutSubmit}>Logout</Dropdown.Item>
         </Dropdown.Menu>
-      </Dropdown>
+      </Dropdown> */}
     </div>
   );
 };

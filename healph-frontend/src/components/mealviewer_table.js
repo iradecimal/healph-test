@@ -1,147 +1,167 @@
-import React, { useState } from "react";
-import { Table, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
+import React, { useState, useEffect, useCallback } from "react";
+import { Table, Tooltip, OverlayTrigger, Spinner, Form } from "react-bootstrap";
 import "./dailyintaketable.css";
 import ItemsPagination from "./pagination";
+import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const MealViewerTable = ({ data }) => {
-  const [sortedColumn, setSortedColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+const MealViewerTable = () => {
+  const [mealsTable, setMealsTable] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState(1);
   const [mealIdFilter, setMealIdFilter] = useState("");
+  const [caloriesMinFilter, setCaloriesMinFilter] = useState("");
+  const [caloriesMaxFilter, setCaloriesMaxFilter] = useState("");
+  const [fatsMinFilter, setFatsMinFilter] = useState("");
+  const [fatsMaxFilter, setFatsMaxFilter] = useState("");
+  const [carbsMinFilter, setCarbsMinFilter] = useState("");
+  const [carbsMaxFilter, setCarbsMaxFilter] = useState("");
+  const [proteinMinFilter, setProteinMinFilter] = useState("");
+  const [proteinMaxFilter, setProteinMaxFilter] = useState("");
+  const [foodWasteMinFilter, setFoodWasteMinFilter] = useState("");
+  const [foodWasteMaxFilter, setFoodWasteMaxFilter] = useState("");
+  const [descriptionFilter, setDescriptionFilter] = useState("");
   const [startDateFilter, setStartDateFilter] = useState(null);
   const [endDateFilter, setEndDateFilter] = useState(null);
-  const [minFatsFilter, setMinFatsFilter] = useState("");
-  const [maxFatsFilter, setMaxFatsFilter] = useState("");
-  const [minCarbohydratesFilter, setMinCarbohydratesFilter] = useState("");
-  const [maxCarbohydratesFilter, setMaxCarbohydratesFilter] = useState("");
-  const [minProteinFilter, setMinProteinFilter] = useState("");
-  const [maxProteinFilter, setMaxProteinFilter] = useState("");
-  const [minFoodwasteFilter, setMinFoodwasteFilter] = useState("");
-  const [maxFoodwasteFilter, setMaxFoodwasteFilter] = useState("");
-  const [descriptionFilter, setDescriptionFilter] = useState("");
-  const [foodCombinationFilter, setFoodCombinationFilter] = useState("");
 
-  //sorting through frontend (as of now)
+  const fetchData = useCallback(
+    (page, limit) => {
+      const filters = [];
 
-  const handleSort = (column, event) => {
-    if (event.target.nodeName === "INPUT") {
-      return;
+      if (mealIdFilter) {
+        filters.push(`_id[lte]=${mealIdFilter}`);
+      }
+
+      if (startDateFilter) {
+        filters.push(
+          `datetime[gte]=${startDateFilter.toLocaleDateString("en-CA")}`
+        );
+      }
+
+      if (endDateFilter) {
+        filters.push(
+          `datetime[lte]=${endDateFilter.toLocaleDateString("en-CA")}`
+        );
+      }
+
+      if (caloriesMinFilter) {
+        filters.push(`cal[gte]=${caloriesMinFilter}`);
+      }
+
+      if (caloriesMaxFilter) {
+        filters.push(`cal[lte]=${caloriesMaxFilter}`);
+      }
+
+      if (fatsMinFilter) {
+        filters.push(`fat[gte]=${fatsMinFilter}`);
+      }
+
+      if (fatsMaxFilter) {
+        filters.push(`fat[lte]=${fatsMaxFilter}`);
+      }
+
+      if (carbsMinFilter) {
+        filters.push(`carbs[gte]=${carbsMinFilter}`);
+      }
+
+      if (carbsMaxFilter) {
+        filters.push(`carbs[lte]=${carbsMaxFilter}`);
+      }
+
+      if (proteinMinFilter) {
+        filters.push(`proteins[gte]=${proteinMinFilter}`);
+      }
+
+      if (proteinMaxFilter) {
+        filters.push(`proteins[lte]=${proteinMaxFilter}`);
+      }
+
+      if (foodWasteMinFilter) {
+        filters.push(`waste[gte]=${foodWasteMinFilter}`);
+      }
+
+      if (foodWasteMaxFilter) {
+        filters.push(`waste[lte]=${foodWasteMaxFilter}`);
+      }
+
+      if (descriptionFilter) {
+        filters.push(`mealdesc[lte]=${descriptionFilter}`);
+      }
+
+      const filtersParam = filters.length > 0 ? filters.join("&") : "";
+
+      const sortParam = sortField
+        ? `sort=${sortDirection === 1 ? sortField : `-${sortField}`}`
+        : "";
+
+      const queryParams = [sortParam, filtersParam].filter(Boolean).join("&");
+
+      setLoading(true);
+
+      axios
+        .get(
+          `http://localhost:3000/dashboard/meals/${page}/${limit}?${queryParams}`
+        )
+        .then((response) => {
+          console.log(response.data);
+          setMealsTable(response.data.docs);
+          setLoading(false);
+          setCurrentPage(response.data.page);
+          setTotalPages(response.data.totalPages);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    },
+    [
+      sortDirection,
+      sortField,
+      mealIdFilter,
+      caloriesMinFilter,
+      caloriesMaxFilter,
+      fatsMinFilter,
+      fatsMaxFilter,
+      carbsMinFilter,
+      carbsMaxFilter,
+      proteinMinFilter,
+      proteinMaxFilter,
+      foodWasteMinFilter,
+      foodWasteMaxFilter,
+      descriptionFilter,
+      startDateFilter,
+      endDateFilter,
+    ]
+  );
+
+  useEffect(() => {
+    const page = 1;
+    const limit = 20;
+    fetchData(page, limit);
+  }, [fetchData]);
+
+  const handlePageChange = (newPage) => {
+    const limit = 20;
+    if (newPage >= 1 && newPage <= totalPages) {
+      fetchData(newPage, limit);
     }
+  };
 
-    if (sortedColumn === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortedColumn(column);
-      setSortOrder("asc");
+  const handleSort = (field, e) => {
+    if (e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") {
+      const limit = 20;
+      if (field === sortField) {
+        setSortDirection(sortDirection === 1 ? -1 : 1);
+      } else {
+        setSortDirection(1);
+      }
+      setSortField(field);
+      fetchData(currentPage, limit);
     }
-  };
-
-  const sortedData = data.slice().sort((a, b) => {
-    if (sortOrder === "asc") {
-      return a[sortedColumn] > b[sortedColumn] ? 1 : -1;
-    } else {
-      return a[sortedColumn] < b[sortedColumn] ? 1 : -1;
-    }
-  });
-
-  //Filtering through frontend(as of now)
-
-  const handleMealIdFilterChange = (event) => {
-    setMealIdFilter(event.target.value);
-  };
-
-  const handleStartDateFilterChange = (date) => {
-    setStartDateFilter(date);
-  };
-
-  const handleEndDateFilterChange = (date) => {
-    setEndDateFilter(date);
-  };
-
-  const handleMinFatsFilterChange = (event) => {
-    setMinFatsFilter(event.target.value);
-  };
-
-  const handleMaxFatsFilterChange = (event) => {
-    setMaxFatsFilter(event.target.value);
-  };
-
-  const handleMinCarbohydratesFilterChange = (event) => {
-    setMinCarbohydratesFilter(event.target.value);
-  };
-
-  const handleMaxCarbohydratesFilterChange = (event) => {
-    setMaxCarbohydratesFilter(event.target.value);
-  };
-
-  const handleMinProteinFilterChange = (event) => {
-    setMinProteinFilter(event.target.value);
-  };
-
-  const handleMaxProteinFilterChange = (event) => {
-    setMaxProteinFilter(event.target.value);
-  };
-
-  const handleMinFoodwasteFilterChange = (event) => {
-    setMinFoodwasteFilter(event.target.value);
-  };
-
-  const handleMaxFoodwasteFilterChange = (event) => {
-    setMaxFoodwasteFilter(event.target.value);
-  };
-
-  const handleDescriptionFilterChange = (event) => {
-    setDescriptionFilter(event.target.value);
-  };
-
-  const handleFoodCombinationFilterChange = (event) => {
-    setFoodCombinationFilter(event.target.value);
-  };
-
-  const filteredData = sortedData.filter((item) => {
-    return (
-      (startDateFilter === null ||
-        item.RecordDate >= startDateFilter.toLocaleDateString("en-GB")) &&
-      (endDateFilter === null ||
-        item.RecordDate <= endDateFilter.toLocaleDateString("en-GB")) &&
-      (minFatsFilter === "" ||
-        (item.Fats >= minFatsFilter &&
-          (maxFatsFilter === "" || item.Fats <= maxFatsFilter))) &&
-      (minCarbohydratesFilter === "" ||
-        (item.Carbohydrates >= minCarbohydratesFilter &&
-          (maxCarbohydratesFilter === "" ||
-            item.Carbohydrates <= maxCarbohydratesFilter))) &&
-      (minProteinFilter === "" ||
-        (item.Protein >= minProteinFilter &&
-          (maxProteinFilter === "" || item.Protein <= maxProteinFilter))) &&
-      (minFoodwasteFilter === "" ||
-        (item.Foodwaste >= minFoodwasteFilter &&
-          (maxFoodwasteFilter === "" ||
-            item.Foodwaste <= maxFoodwasteFilter))) &&
-      (descriptionFilter === "" ||
-        item.Description.toLowerCase().includes(
-          descriptionFilter.toLowerCase()
-        )) &&
-      (foodCombinationFilter === "" ||
-        item.Foodcombination.some((food) =>
-          food.toLowerCase().includes(foodCombinationFilter.toLowerCase())
-        )) &&
-      (mealIdFilter === "" || item.Mealid.toString() === mealIdFilter)
-    );
-  });
-
-  //pagination through frontend (as of now)
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const page_items = 15;
-  const totalPages = Math.ceil(filteredData.length / page_items);
-  const startIndex = (currentPage - 1) * page_items;
-  const endIndex = startIndex + page_items;
-  const currentData = filteredData.slice(startIndex, endIndex);
-
-  const handlePageChange = (pageNum) => {
-    setCurrentPage(pageNum);
   };
 
   const renderTooltip = (text) => <Tooltip id="tooltip">{text}</Tooltip>;
@@ -153,219 +173,240 @@ const MealViewerTable = ({ data }) => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+
       <div style={{ maxWidth: "100%", overflowX: "auto" }}>
-        <Table
-          striped
-          bordered
-          hover
-          style={{ borderColor: "#9FC856" }}
-          size="sm"
-        >
-          <thead>
-            <tr>
-              <th onClick={(event) => handleSort("Userid", event)}>
-                Meal ID
-                <br />
-                <Form.Control
-                  type="text"
-                  value={mealIdFilter}
-                  onChange={handleMealIdFilterChange}
-                  placeholder="Filter"
-                  style={{ width: "100px" }}
-                />
-              </th>
-              <th onClick={(event) => handleSort("RecordDate", event)}>
-                Date
-                <br />
-                Start Date: <div></div>
-                <DatePicker
-                  selected={startDateFilter}
-                  onChange={handleStartDateFilterChange}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Select Start Date"
-                />
-                <br />
-                End Date:{" "}
-                <DatePicker
-                  selected={endDateFilter}
-                  onChange={handleEndDateFilterChange}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Select End Date"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Fats", event)}>
-                Fats
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minFatsFilter}
-                  onChange={handleMinFatsFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxFatsFilter}
-                  onChange={handleMaxFatsFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Carbohydrates", event)}>
-                Carbohydrates
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minCarbohydratesFilter}
-                  onChange={handleMinCarbohydratesFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxCarbohydratesFilter}
-                  onChange={handleMaxCarbohydratesFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Protein", event)}>
-                Protein
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minProteinFilter}
-                  onChange={handleMinProteinFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxProteinFilter}
-                  onChange={handleMaxProteinFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Foodwaste", event)}>
-                Food waste
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minFoodwasteFilter}
-                  onChange={handleMinFoodwasteFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxFoodwasteFilter}
-                  onChange={handleMaxFoodwasteFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th>
-                Food Combination
-                <br />
-                <Form.Control
-                  type="text"
-                  value={foodCombinationFilter}
-                  onChange={handleFoodCombinationFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th>
-                Description
-                <br />
-                <Form.Control
-                  type="text"
-                  value={descriptionFilter}
-                  onChange={handleDescriptionFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-            </tr>
-          </thead>
-          <tbody style={{ backgroundColor: "black" }}>
-            {currentData.map((item, index) => (
-              <tr key={index}>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Meal ID: ${item.Mealid}`)}
-                  >
-                    <div>{item.Mealid}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Date: ${item.RecordDate}`)}
-                  >
-                    <div>{item.RecordDate}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Fats: ${item.Fats}`)}
-                  >
-                    <div>{item.Fats}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(
-                      `Carbohydrates: ${item.Carbohydrates}`
-                    )}
-                  >
-                    <div>{item.Carbohydrates}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Protein: ${item.Protein}`)}
-                  >
-                    <div>{item.Protein}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Food Waste: ${item.Foodwaste}`)}
-                  >
-                    <div>{item.Foodwaste}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(
-                      `Food Combination: ${item.Foodcombination.join(",")}`
-                    )}
-                  >
-                    <div>{item.Foodcombination.join(",")}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Description: ${item.Description}`)}
-                  >
-                    <div>{item.Description}</div>
-                  </OverlayTrigger>
-                </td>
+        {loading ? (
+          <Spinner
+            animation="border"
+            role="status"
+            style={{ color: "#9FC856" }}
+          />
+        ) : (
+          <Table striped bordered hover style={{ borderColor: "#9FC856" }}>
+            <thead>
+              <tr>
+                <th onClick={(e) => handleSort("_id", e)}>
+                  <div>
+                    Meal ID
+                    <Form.Control
+                      placeholder="Filter"
+                      value={mealIdFilter}
+                      onChange={(e) => setMealIdFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th
+                  onClick={(e) => {
+                    if (e.currentTarget === e.target) {
+                      handleSort("datetime", e);
+                    }
+                  }}
+                >
+                  Date
+                  <div>
+                    <DatePicker
+                      selected={startDateFilter}
+                      dateFormat="yyyy-MM-dd"
+                      onChange={(date) => setStartDateFilter(date)}
+                      selectsStart
+                      startDate={startDateFilter}
+                      endDate={endDateFilter}
+                      placeholderText="Start Date"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <DatePicker
+                      selected={endDateFilter}
+                      onChange={(date) => setEndDateFilter(date)}
+                      selectsEnd
+                      startDate={startDateFilter}
+                      endDate={endDateFilter}
+                      dateFormat="yyyy-MM-dd"
+                      placeholderText="End Date"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("cal", e)}>
+                  <div>
+                    Calories
+                    <Form.Control
+                      type="number"
+                      placeholder="Min"
+                      value={caloriesMinFilter}
+                      onChange={(e) => setCaloriesMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      type="number"
+                      placeholder="Max"
+                      value={caloriesMaxFilter}
+                      onChange={(e) => setCaloriesMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("fats", e)}>
+                  <div>
+                    Fats
+                    <Form.Control
+                      type="number"
+                      placeholder="Min"
+                      value={fatsMinFilter}
+                      onChange={(e) => setFatsMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      type="number"
+                      placeholder="Max"
+                      value={fatsMaxFilter}
+                      onChange={(e) => setFatsMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("carbs", e)}>
+                  <div>
+                    Carbohydrates
+                    <Form.Control
+                      type="number"
+                      placeholder="Min"
+                      value={carbsMinFilter}
+                      onChange={(e) => setCarbsMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      type="number"
+                      placeholder="Max"
+                      value={carbsMaxFilter}
+                      onChange={(e) => setCarbsMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("proteins", e)}>
+                  <div>
+                    Protein
+                    <Form.Control
+                      type="number"
+                      placeholder="Min"
+                      value={proteinMinFilter}
+                      onChange={(e) => setProteinMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      type="number"
+                      placeholder="Max"
+                      value={proteinMaxFilter}
+                      onChange={(e) => setProteinMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("waste", e)}>
+                  <div>
+                    Food Waste
+                    <Form.Control
+                      type="number"
+                      placeholder="Min"
+                      value={foodWasteMinFilter}
+                      onChange={(e) => setFoodWasteMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      type="number"
+                      placeholder="Max"
+                      value={foodWasteMaxFilter}
+                      onChange={(e) => setFoodWasteMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th>Food Groups</th>
+                <th onClick={(e) => handleSort("mealdesc", e)}>
+                  <div>
+                    Description
+                    <Form.Control
+                      type="text"
+                      placeholder="Filter"
+                      value={descriptionFilter}
+                      onChange={(e) => setDescriptionFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody style={{ backgroundColor: "black" }}>
+              {mealsTable.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Meal ID: ${item._id}`)}
+                    >
+                      <div>{item._id}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Date: ${item.datetime}`)}
+                    >
+                      <div>{item.datetime}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Calories: ${item.cal}`)}
+                    >
+                      <div>{item.cal}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Fats: ${item.fat}`)}
+                    >
+                      <div>{item.fat}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Carbohydrates: ${item.carbs}`)}
+                    >
+                      <div>{item.carbs}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Protein: ${item.proteins}`)}
+                    >
+                      <div>{item.proteins}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Food Waste: ${item.waste}`)}
+                    >
+                      <div>{item.waste}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(
+                        `Food Group: ${item.foodgroups.join(", ")}`
+                      )}
+                    >
+                      <div>{item.foodgroups.join(", ")}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Description: ${item.mealdesc}`)}
+                    >
+                      <div>{item.mealdesc}</div>
+                    </OverlayTrigger>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </div>
     </div>
   );

@@ -1,67 +1,142 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/sidebar";
 import HamburgerMenu from "../components/hamburgermenu";
 import LeaderboardsTable from "../components/leaderboardsTable";
 import IntervalDropdown from "../components/intervalDropdown";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 import AvgCard from "../components/avgCard";
-import { FaWalking, FaBed, FaNutritionix } from "react-icons/fa";
+import { FaWalking, FaBed, FaHamburger } from "react-icons/fa";
 import {
   FaPlateWheat,
   FaGlassWater,
   FaTrashCan,
-  FaChartBar,
+  FaPeopleGroup,
+  FaBreadSlice,
 } from "react-icons/fa6";
-import { GiHealthIncrease, GiPieChart } from "react-icons/gi";
-import { Chart } from "react-google-charts";
+import { GiHealthIncrease, GiChickenLeg, GiMeat } from "react-icons/gi";
+import axios from "axios";
 
 const Dashboard = () => {
-  // Dummy data
-  const averageSteps = 7500;
-  const averageSleep = 7.5;
-
-  //sample data since not sure what to put on the graphs yet
-  const chart_sampledata = [
-    ["Task", "Hours per Day"],
-    ["Work", 11],
-    ["Eat", 2],
-    ["Commute", 2],
-    ["Watch TV", 2],
-    ["Sleep", 7],
-  ];
-
-  const bar_sampledata = [
-    ["Year", "Sales", "Expenses", "Profit"],
-    ["2014", 1000, 400, 200],
-    ["2015", 1170, 460, 250],
-    ["2016", 660, 1120, 300],
-    ["2017", 1030, 540, 350],
-  ];
-
-  //leaderboards dummy data
-  const peopleData = [
-    { Name: { first: "John", middle: "Doe", last: "Smith" }, HALE: 10 },
-    { Name: { first: "Jane", middle: "E.", last: "Doe" }, HALE: 9 },
-    { Name: { first: "Alice", middle: "M.", last: "Johnson" }, HALE: 8 },
-    { Name: { first: "Bob", middle: "R.", last: "Williams" }, HALE: 7 },
-    { Name: { first: "Emily", middle: "K.", last: "Brown" }, HALE: 6 },
-    { Name: { first: "Michael", middle: "J.", last: "Miller" }, HALE: 5 },
-    { Name: { first: "Olivia", middle: "A.", last: "Taylor" }, HALE: 4 },
-    { Name: { first: "William", middle: "B.", last: "Davis" }, HALE: 3 },
-    { Name: { first: "Sophia", middle: "C.", last: "Wilson" }, HALE: 2 },
-    { Name: { first: "Daniel", middle: "S.", last: "Anderson" }, HALE: 1 },
-  ];
-
   const [overviewInterval, setOverviewInterval] = useState("daily");
   const [leaderboardInterval, setLeaderboardInterval] = useState("daily");
   const intervalOptions = ["daily", "weekly", "monthly"];
+  const [intakeStats, setIntakeStats] = useState([]);
+  const [mealStats, setMealStats] = useState([]);
+  const [leaderboards, setLeaderboards] = useState([]);
+  const [userCount, setUserCount] = useState(0);
+  const [loadingMealStats, setLoadingMealStats] = useState(true);
+  const [loadingIntakeStats, setLoadingIntakeStats] = useState(true);
+  const [loadingLeaderboards, setLoadingLeaderboards] = useState(true);
+  const [loadingUserCount, setLoadingUserCount] = useState(true);
+
+  useEffect(() => {
+    // Fetch data for mealStats
+    axios
+      .get(`http://localhost:3000/dashboard/dailystats/meal`)
+      .then((response) => {
+        setMealStats(response.data);
+        setLoadingMealStats(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching mealStats data:", error);
+        setLoadingMealStats(false);
+      });
+
+    // Fetch data for intakeStats
+    axios
+      .get(`http://localhost:3000/dashboard/dailystats/intake`)
+      .then((response) => {
+        setIntakeStats(response.data);
+        setLoadingIntakeStats(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching intakeStats data:", error);
+        setLoadingIntakeStats(false);
+      });
+
+    // Fetch data for leaderboards
+    axios
+      .get(`http://localhost:3000/dashboard/rankings/daily`)
+      .then((response) => {
+        setLeaderboards(response.data);
+        setLoadingLeaderboards(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching leaderboards data:", error);
+        setLoadingLeaderboards(false);
+      });
+
+    // Fetch data for user count
+    axios
+      .get(`http://localhost:3000/dashboard/users/1/1`)
+      .then((response) => {
+        setUserCount(response.data.totalDocs);
+        setLoadingUserCount(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoadingUserCount(false);
+      });
+  }, []);
 
   const handleOverviewIntervalChange = (interval) => {
     setOverviewInterval(interval);
+
+    // Define API URLs based on the selected interval
+    let intakeApiUrl, mealApiUrl;
+    if (interval === "daily") {
+      intakeApiUrl = "http://localhost:3000/dashboard/dailystats/intake";
+      mealApiUrl = "http://localhost:3000/dashboard/dailystats/meal";
+    } else if (interval === "weekly") {
+      intakeApiUrl = "http://localhost:3000/dashboard/weeklystats/intake";
+      mealApiUrl = "http://localhost:3000/dashboard/weeklystats/meal";
+    } else if (interval === "monthly") {
+      intakeApiUrl = "http://localhost:3000/dashboard/monthlystats/intake";
+      mealApiUrl = "http://localhost:3000/dashboard/monthlystats/meal";
+    }
+
+    // Fetch data for mealStats
+    axios
+      .get(mealApiUrl)
+      .then((response) => {
+        setMealStats(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching mealStats data:", error);
+      });
+
+    // Fetch data for intakeStats
+    axios
+      .get(intakeApiUrl)
+      .then((response) => {
+        setIntakeStats(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching intakeStats data:", error);
+      });
   };
 
   const handleLeaderboardIntervalChange = (interval) => {
     setLeaderboardInterval(interval);
+
+    // Define API URL for leaderboards based on the selected interval
+    let leaderboardApiUrl;
+    if (interval === "daily") {
+      leaderboardApiUrl = "http://localhost:3000/dashboard/rankings/daily";
+    } else if (interval === "weekly") {
+      leaderboardApiUrl = "http://localhost:3000/dashboard/rankings/weekly";
+    } else if (interval === "monthly") {
+      leaderboardApiUrl = "http://localhost:3000/dashboard/rankings/monthly";
+    }
+
+    axios
+      .get(leaderboardApiUrl)
+      .then((response) => {
+        setLeaderboards(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching leaderboards data:", error);
+      });
   };
 
   return (
@@ -97,6 +172,44 @@ const Dashboard = () => {
               >
                 Overview
               </h4>
+              {loadingUserCount ? (
+                <Spinner
+                  animation="border"
+                  role="status"
+                  style={{ color: "#9FC856" }}
+                />
+              ) : (
+                <>
+                  <h5
+                    style={{
+                      marginTop: "20px",
+                      marginBottom: "20px",
+                      color: "#9FC856",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Users
+                  </h5>
+                  <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                    <AvgCard
+                      icon={<FaPeopleGroup />}
+                      label="Number of Users"
+                      value={userCount}
+                    />
+                  </Col>
+                </>
+              )}
+
+              <h5
+                style={{
+                  marginTop: "20px",
+                  marginBottom: "20px",
+                  color: "#9FC856",
+                  fontWeight: "600",
+                }}
+              >
+                Meals & Intakes
+              </h5>
               <IntervalDropdown
                 intervalOptions={intervalOptions}
                 selectedInterval={overviewInterval}
@@ -104,91 +217,106 @@ const Dashboard = () => {
               />
             </div>
 
-            <Row>
-              <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<GiHealthIncrease />}
-                  label="Avg. HALE"
-                  value={averageSteps}
-                />
-              </Col>
-              <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<FaPlateWheat />}
-                  label="Avg. PHD"
-                  value={averageSleep}
-                />
-              </Col>
-              <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<FaWalking />}
-                  label="Avg. Steps"
-                  value={averageSleep}
-                />
-              </Col>
-              <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<FaBed />}
-                  label="Avg. Hours of Sleep"
-                  value={averageSleep}
-                />
-              </Col>
-            </Row>
+            {loadingIntakeStats ? (
+              <Spinner
+                animation="border"
+                role="status"
+                style={{ color: "#9FC856" }}
+              />
+            ) : (
+              <>
+                {intakeStats.map((stat, index) => (
+                  <Row key={index}>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<GiHealthIncrease />}
+                        label="Avg. HALE"
+                        value={stat.hale.toFixed(4)}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaPlateWheat />}
+                        label="Avg. PHD"
+                        value={stat.phd.toFixed(4)}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaWalking />}
+                        label="Avg. Steps"
+                        value={stat.steps.toFixed(4)}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaBed />}
+                        label="Avg. Hours of Sleep"
+                        value={stat.sleephrs.toFixed(4)}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaGlassWater />}
+                        label="Avg. Water Intake"
+                        value={stat.waterglass.toFixed(4)}
+                      />
+                    </Col>
+                  </Row>
+                ))}
+              </>
+            )}
 
-            <Row>
-              <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<FaGlassWater />}
-                  label="Avg. Water Intake"
-                  value={averageSleep}
-                />
-              </Col>
-              <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<FaTrashCan />}
-                  label="Avg. Food Waste"
-                  value={averageSleep}
-                />
-              </Col>
-              <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<FaNutritionix />}
-                  label="Avg. Diversity"
-                  value={averageSleep}
-                />
-              </Col>
-            </Row>
+            {loadingMealStats ? (
+              <Spinner
+                animation="border"
+                role="status"
+                style={{ color: "#9FC856" }}
+              />
+            ) : (
+              <>
+                {mealStats.map((stat, index) => (
+                  <Row key={index}>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<GiMeat />}
+                        label="Fats"
+                        value={stat.fat}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaBreadSlice />}
+                        label="Carbohydrates"
+                        value={stat.carbs}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<GiChickenLeg />}
+                        label="Proteins"
+                        value={stat.proteins}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaHamburger />}
+                        label="Calories"
+                        value={stat.cal}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaTrashCan />}
+                        label="Avg. Food Waste"
+                        value={stat.waste}
+                      />
+                    </Col>
+                  </Row>
+                ))}
+              </>
+            )}
 
-            <Row>
-              <Col md={6} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<GiPieChart />}
-                  label="Sample pie chart"
-                  value={
-                    <Chart
-                      chartType="PieChart"
-                      data={chart_sampledata}
-                      width={"100%"}
-                      height={"400px"}
-                    />
-                  }
-                />
-              </Col>
-              <Col md={6} sm={6} style={{ marginBottom: "20px" }}>
-                <AvgCard
-                  icon={<FaChartBar />}
-                  label="Sample bar"
-                  value={
-                    <Chart
-                      chartType="Bar"
-                      width="100%"
-                      height="400px"
-                      data={bar_sampledata}
-                    />
-                  }
-                />
-              </Col>
-            </Row>
             <div>
               <h4
                 style={{
@@ -208,7 +336,15 @@ const Dashboard = () => {
               />
             </div>
 
-            <LeaderboardsTable data={peopleData} />
+            {loadingLeaderboards ? (
+              <Spinner
+                animation="border"
+                role="status"
+                style={{ color: "#9FC856" }}
+              />
+            ) : (
+              <LeaderboardsTable data={leaderboards} />
+            )}
           </Col>
         </Row>
       </Container>

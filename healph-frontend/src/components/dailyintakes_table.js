@@ -1,448 +1,415 @@
-import React, { useState } from "react";
-import { Table, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
-import "./dailyintaketable.css";
+import React, { useState, useEffect, useCallback } from "react";
+import { Table, OverlayTrigger, Tooltip, Form, Spinner } from "react-bootstrap";
 import ItemsPagination from "./pagination";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
 
-const DailyIntakeTable = ({ data }) => {
-  const [sortedColumn, setSortedColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [userIdFilter, setUserIdFilter] = useState("");
+const DailyIntakeTable = () => {
+  const [intakesTable, setIntakesTable] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState(1);
+
+  // Filter state variables
+  const [uidFilter, setUidFilter] = useState("");
   const [startDateFilter, setStartDateFilter] = useState(null);
   const [endDateFilter, setEndDateFilter] = useState(null);
-  const [minHoursOfSleepFilter, setMinHoursOfSleepFilter] = useState("");
-  const [maxHoursOfSleepFilter, setMaxHoursOfSleepFilter] = useState("");
-  const [minGlassesOfWaterFilter, setMinGlassesOfWaterFilter] = useState("");
-  const [maxGlassesOfWaterFilter, setMaxGlassesOfWaterFilter] = useState("");
-  const [minStepsTakenFilter, setMinStepsTakenFilter] = useState("");
-  const [maxStepsTakenFilter, setMaxStepsTakenFilter] = useState("");
-  const [minCaloricIntakeFilter, setMinCaloricIntakeFilter] = useState("");
-  const [maxCaloricIntakeFilter, setMaxCaloricIntakeFilter] = useState("");
-  const [minCaloricDiversityFilter, setMinCaloricDiversityFilter] =
-    useState("");
-  const [maxCaloricDiversityFilter, setMaxCaloricDiversityFilter] =
-    useState("");
-  const [minHaleFilter, setMinHaleFilter] = useState("");
-  const [maxHaleFilter, setMaxHaleFilter] = useState("");
-  const [minPhdFilter, setMinPhdFilter] = useState("");
-  const [maxPhdFilter, setMaxPhdFilter] = useState("");
+  const [sleephrsMinFilter, setSleephrsMinFilter] = useState("");
+  const [sleephrsMaxFilter, setSleephrsMaxFilter] = useState("");
+  const [waterglassMinFilter, setWaterglassMinFilter] = useState("");
+  const [waterglassMaxFilter, setWaterglassMaxFilter] = useState("");
+  const [stepsMinFilter, setStepsMinFilter] = useState("");
+  const [stepsMaxFilter, setStepsMaxFilter] = useState("");
+  const [dailycalMinFilter, setDailycalMinFilter] = useState("");
+  const [dailycalMaxFilter, setDailycalMaxFilter] = useState("");
+  const [haleMinFilter, setHaleMinFilter] = useState("");
+  const [haleMaxFilter, setHaleMaxFilter] = useState("");
+  const [phdMinFilter, setPhdMinFilter] = useState("");
+  const [phdMaxFilter, setPhdMaxFilter] = useState("");
 
-  //sorting through frontend (as of now)
+  const fetchData = useCallback(
+    (page, limit) => {
+      const sortParam = sortField
+        ? `sort=${sortDirection === 1 ? sortField : `-${sortField}`}`
+        : "";
 
-  const handleSort = (column, event) => {
-    if (event.target.nodeName === "INPUT") {
-      return;
+      const filters = [];
+
+      if (uidFilter) {
+        filters.push(`uid[lte]=${uidFilter}`);
+      }
+
+      if (startDateFilter) {
+        filters.push(
+          `date[gte]=${startDateFilter.toLocaleDateString("en-CA")}`
+        );
+      }
+
+      if (endDateFilter) {
+        filters.push(`date[lte]=${endDateFilter.toLocaleDateString("en-CA")}`);
+      }
+
+      if (sleephrsMinFilter) {
+        filters.push(`sleephrs[gte]=${sleephrsMinFilter}`);
+      }
+      if (sleephrsMaxFilter) {
+        filters.push(`sleephrs[lte]=${sleephrsMaxFilter}`);
+      }
+
+      if (waterglassMinFilter) {
+        filters.push(`waterglass[gte]=${waterglassMinFilter}`);
+      }
+      if (waterglassMaxFilter) {
+        filters.push(`waterglass[lte]=${waterglassMaxFilter}`);
+      }
+
+      if (stepsMinFilter) {
+        filters.push(`steps[gte]=${stepsMinFilter}`);
+      }
+      if (stepsMaxFilter) {
+        filters.push(`steps[lte]=${stepsMaxFilter}`);
+      }
+
+      if (dailycalMinFilter) {
+        filters.push(`dailycal[gte]=${dailycalMinFilter}`);
+      }
+      if (dailycalMaxFilter) {
+        filters.push(`dailycal[lte]=${dailycalMaxFilter}`);
+      }
+
+      if (haleMinFilter) {
+        filters.push(`hale[gte]=${haleMinFilter}`);
+      }
+      if (haleMaxFilter) {
+        filters.push(`hale[lte]=${haleMaxFilter}`);
+      }
+
+      if (phdMinFilter) {
+        filters.push(`phd[gte]=${phdMinFilter}`);
+      }
+      if (phdMaxFilter) {
+        filters.push(`phd[lte]=${phdMaxFilter}`);
+      }
+
+      const filtersParam = filters.length > 0 ? filters.join("&") : "";
+
+      axios
+        .get(
+          `http://localhost:3000/dashboard/intakes/${page}/${limit}?${sortParam}&${filtersParam}`
+        )
+        .then((response) => {
+          setIntakesTable(response.data.docs);
+          setLoading(false);
+          setCurrentPage(response.data.page);
+          setTotalPages(response.data.totalPages);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    },
+    [
+      sortField,
+      sortDirection,
+      uidFilter,
+      startDateFilter,
+      endDateFilter,
+      sleephrsMinFilter,
+      sleephrsMaxFilter,
+      waterglassMinFilter,
+      waterglassMaxFilter,
+      stepsMinFilter,
+      stepsMaxFilter,
+      dailycalMinFilter,
+      dailycalMaxFilter,
+      haleMinFilter,
+      haleMaxFilter,
+      phdMinFilter,
+      phdMaxFilter,
+    ]
+  );
+
+  useEffect(() => {
+    const page = 1;
+    const limit = 20;
+
+    fetchData(page, limit);
+  }, [
+    sortField,
+    sortDirection,
+    uidFilter,
+    startDateFilter,
+    endDateFilter,
+    sleephrsMinFilter,
+    sleephrsMaxFilter,
+    waterglassMinFilter,
+    waterglassMaxFilter,
+    stepsMinFilter,
+    stepsMaxFilter,
+    dailycalMinFilter,
+    dailycalMaxFilter,
+    haleMinFilter,
+    haleMaxFilter,
+    phdMinFilter,
+    phdMaxFilter,
+    fetchData,
+  ]);
+
+  const handlePageChange = (newPage) => {
+    const limit = 20;
+    if (newPage >= 1 && newPage <= totalPages) {
+      fetchData(newPage, limit);
     }
+  };
 
-    if (sortedColumn === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortedColumn(column);
-      setSortOrder("asc");
+  const handleSort = (field, e) => {
+    if (e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") {
+      const limit = 20;
+      if (field === sortField) {
+        setSortDirection(sortDirection === 1 ? -1 : 1);
+      } else {
+        setSortDirection(1);
+      }
+      setSortField(field);
+      fetchData(currentPage, limit);
     }
-  };
-
-  const sortedData = data.slice().sort((a, b) => {
-    if (sortOrder === "asc") {
-      return a[sortedColumn] > b[sortedColumn] ? 1 : -1;
-    } else {
-      return a[sortedColumn] < b[sortedColumn] ? 1 : -1;
-    }
-  });
-
-  //Filtering through frontend(as of now)
-
-  const handleUserIdFilterChange = (event) => {
-    setUserIdFilter(event.target.value);
-  };
-
-  const handleStartDateFilterChange = (date) => {
-    setStartDateFilter(date);
-  };
-
-  const handleEndDateFilterChange = (date) => {
-    setEndDateFilter(date);
-  };
-
-  const handleMinHoursOfSleepFilterChange = (event) => {
-    setMinHoursOfSleepFilter(event.target.value);
-  };
-
-  const handleMaxHoursOfSleepFilterChange = (event) => {
-    setMaxHoursOfSleepFilter(event.target.value);
-  };
-
-  const handleMinGlassesOfWaterFilterChange = (event) => {
-    setMinGlassesOfWaterFilter(event.target.value);
-  };
-
-  const handleMaxGlassesOfWaterFilterChange = (event) => {
-    setMaxGlassesOfWaterFilter(event.target.value);
-  };
-
-  const handleMinStepsTakenFilterChange = (event) => {
-    setMinStepsTakenFilter(event.target.value);
-  };
-
-  const handleMaxStepsTakenFilterChange = (event) => {
-    setMaxStepsTakenFilter(event.target.value);
-  };
-
-  const handleMinCaloricIntakeFilterChange = (event) => {
-    setMinCaloricIntakeFilter(event.target.value);
-  };
-
-  const handleMaxCaloricIntakeFilterChange = (event) => {
-    setMaxCaloricIntakeFilter(event.target.value);
-  };
-
-  const handleMinCaloricDiversityFilterChange = (event) => {
-    setMinCaloricDiversityFilter(event.target.value);
-  };
-
-  const handleMaxCaloricDiversityFilterChange = (event) => {
-    setMaxCaloricDiversityFilter(event.target.value);
-  };
-
-  const handleMinHaleFilterChange = (event) => {
-    setMinHaleFilter(event.target.value);
-  };
-
-  const handleMaxHaleFilterChange = (event) => {
-    setMaxHaleFilter(event.target.value);
-  };
-
-  const handleMinPhdFilterChange = (event) => {
-    setMinPhdFilter(event.target.value);
-  };
-
-  const handleMaxPhdFilterChange = (event) => {
-    setMaxPhdFilter(event.target.value);
-  };
-
-  const filteredData = sortedData.filter((item) => {
-    return (
-      (startDateFilter === null ||
-        item.RecordDate >= startDateFilter.toLocaleDateString("en-GB")) &&
-      (endDateFilter === null ||
-        item.RecordDate <= endDateFilter.toLocaleDateString("en-GB")) &&
-      (minHoursOfSleepFilter === "" ||
-        (item.Hrsofsleep >= minHoursOfSleepFilter &&
-          (maxHoursOfSleepFilter === "" ||
-            item.Hrsofsleep <= maxHoursOfSleepFilter))) &&
-      (minGlassesOfWaterFilter === "" ||
-        (item.Glassesofwater >= minGlassesOfWaterFilter &&
-          (maxGlassesOfWaterFilter === "" ||
-            item.Glassesofwater <= maxGlassesOfWaterFilter))) &&
-      (minStepsTakenFilter === "" ||
-        (item.Stepstaken >= minStepsTakenFilter &&
-          (maxStepsTakenFilter === "" ||
-            item.Stepstaken <= maxStepsTakenFilter))) &&
-      (minCaloricIntakeFilter === "" ||
-        (item.Caloricintake >= minCaloricIntakeFilter &&
-          (maxCaloricIntakeFilter === "" ||
-            item.Caloricintake <= maxCaloricIntakeFilter))) &&
-      (minCaloricDiversityFilter === "" ||
-        (item.Caloricdiversity >= minCaloricDiversityFilter &&
-          (maxCaloricDiversityFilter === "" ||
-            item.Caloricdiversity <= maxCaloricDiversityFilter))) &&
-      (minHaleFilter === "" ||
-        (item.HALE >= minHaleFilter &&
-          (maxHaleFilter === "" || item.HALE <= maxHaleFilter))) &&
-      (minPhdFilter === "" ||
-        (item.PHD >= minPhdFilter &&
-          (maxPhdFilter === "" || item.PHD <= maxPhdFilter))) &&
-      (userIdFilter === "" || item.Userid.toString() === userIdFilter)
-    );
-  });
-
-  //pagination through frontend (as of now)
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const page_items = 15;
-  const totalPages = Math.ceil(filteredData.length / page_items);
-  const startIndex = (currentPage - 1) * page_items;
-  const endIndex = startIndex + page_items;
-  const currentData = filteredData.slice(startIndex, endIndex);
-
-  const handlePageChange = (pageNum) => {
-    setCurrentPage(pageNum);
   };
 
   const renderTooltip = (text) => <Tooltip id="tooltip">{text}</Tooltip>;
 
   return (
     <div>
-      <div>
-        <ItemsPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
-      <div style={{ maxWidth: "100%", overflowX: "auto" }}>
-        <Table
-          striped
-          bordered
-          hover
-          style={{ borderColor: "#9FC856" }}
-          size="sm"
-        >
-          <thead>
-            <tr>
-              <th onClick={(event) => handleSort("Userid", event)}>
-                User ID
-                <br />
-                <input
-                  type="text"
-                  value={userIdFilter}
-                  onChange={handleUserIdFilterChange}
-                  placeholder="Filter"
-                  style={{ width: "100px" }}
-                />
-              </th>
-              <th onClick={(event) => handleSort("RecordDate", event)}>
-                Date
-                <br />
-                Start Date: <div></div>
-                <DatePicker
-                  selected={startDateFilter}
-                  onChange={handleStartDateFilterChange}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Select Start Date"
-                />
-                <br />
-                End Date:{" "}
-                <DatePicker
-                  selected={endDateFilter}
-                  onChange={handleEndDateFilterChange}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Select End Date"
-                />
-              </th>
+      <ItemsPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
 
-              <th onClick={(event) => handleSort("Hrsofsleep", event)}>
-                Hours of Sleep
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minHoursOfSleepFilter}
-                  onChange={handleMinHoursOfSleepFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxHoursOfSleepFilter}
-                  onChange={handleMaxHoursOfSleepFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Glassesofwater", event)}>
-                Glasses of Water
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minGlassesOfWaterFilter}
-                  onChange={handleMinGlassesOfWaterFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxGlassesOfWaterFilter}
-                  onChange={handleMaxGlassesOfWaterFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Stepstaken", event)}>
-                Steps Taken
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minStepsTakenFilter}
-                  onChange={handleMinStepsTakenFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxStepsTakenFilter}
-                  onChange={handleMaxStepsTakenFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Caloricintake", event)}>
-                Caloric Intake
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minCaloricIntakeFilter}
-                  onChange={handleMinCaloricIntakeFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxCaloricIntakeFilter}
-                  onChange={handleMaxCaloricIntakeFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("Caloricdiversity", event)}>
-                Caloric Diversity
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minCaloricDiversityFilter}
-                  onChange={handleMinCaloricDiversityFilterChange}
-                  placeholder="Filter"
-                />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxCaloricDiversityFilter}
-                  onChange={handleMaxCaloricDiversityFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("HALE", event)}>
-                HALE
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minHaleFilter}
-                  onChange={handleMinHaleFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxHaleFilter}
-                  onChange={handleMaxHaleFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-              <th onClick={(event) => handleSort("PHD", event)}>
-                PHD
-                <br />
-                Min:
-                <Form.Control
-                  type="text"
-                  value={minPhdFilter}
-                  onChange={handleMinPhdFilterChange}
-                  placeholder="Filter"
-                />
-                <br />
-                Max:
-                <Form.Control
-                  type="text"
-                  value={maxPhdFilter}
-                  onChange={handleMaxPhdFilterChange}
-                  placeholder="Filter"
-                />
-              </th>
-            </tr>
-          </thead>
-          <tbody style={{ backgroundColor: "black" }}>
-            {currentData.map((item, index) => (
-              <tr key={index}>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`User ID: ${item.Userid}`)}
-                  >
-                    <div>{item.Userid}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Date: ${item.RecordDate}`)}
-                  >
-                    <div>{item.RecordDate}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(
-                      `Hours of sleep: ${item.Hrsofsleep}`
-                    )}
-                  >
-                    <div>{item.Hrsofsleep}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(
-                      `Glasses of water: ${item.Glassesofwater}`
-                    )}
-                  >
-                    <div>{item.Glassesofwater}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`Steps taken: ${item.Stepstaken}`)}
-                  >
-                    <div>{item.Stepstaken}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(
-                      `Caloric Intake: ${item.Caloricintake}`
-                    )}
-                  >
-                    <div>{item.Caloricintake}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(
-                      `Caloric Diversity: ${item.Caloricdiversity}`
-                    )}
-                  >
-                    <div>{item.Caloricdiversity}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`HALE points: ${item.HALE}`)}
-                  >
-                    <div>{item.HALE}</div>
-                  </OverlayTrigger>
-                </td>
-                <td>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={renderTooltip(`PHD points: ${item.PHD}`)}
-                  >
-                    <div>{item.PHD}</div>
-                  </OverlayTrigger>
-                </td>
+      <div style={{ maxWidth: "100%", overflowX: "auto" }}>
+        {loading ? (
+          <Spinner
+            animation="border"
+            role="status"
+            style={{ color: "#9FC856" }}
+          />
+        ) : (
+          <Table striped bordered hover style={{ borderColor: "#9FC856" }}>
+            <thead>
+              <tr>
+                <th onClick={(e) => handleSort("uid", e)}>
+                  User ID
+                  <div>
+                    <Form.Control
+                      placeholder="Filter"
+                      value={uidFilter}
+                      onChange={(e) => setUidFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th
+                  onClick={(e) => {
+                    if (e.currentTarget === e.target) {
+                      handleSort("date", e);
+                    }
+                  }}
+                >
+                  Date
+                  <div>
+                    <DatePicker
+                      selected={startDateFilter}
+                      onChange={(date) => setStartDateFilter(date)}
+                      selectsStart
+                      startDate={startDateFilter}
+                      endDate={endDateFilter}
+                      dateFormat="yyyy-MM-dd"
+                      placeholderText="Start Date"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <DatePicker
+                      selected={endDateFilter}
+                      onChange={(date) => setEndDateFilter(date)}
+                      selectsEnd
+                      startDate={startDateFilter}
+                      endDate={endDateFilter}
+                      dateFormat="yyyy-MM-dd"
+                      placeholderText="End Date"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("sleephrs", e)}>
+                  Hours of Sleep
+                  <div>
+                    <Form.Control
+                      placeholder="Min"
+                      value={sleephrsMinFilter}
+                      onChange={(e) => setSleephrsMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      placeholder="Max"
+                      value={sleephrsMaxFilter}
+                      onChange={(e) => setSleephrsMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("waterglass", e)}>
+                  Glasses of Water
+                  <div>
+                    <Form.Control
+                      placeholder="Min"
+                      value={waterglassMinFilter}
+                      onChange={(e) => setWaterglassMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      placeholder="Max"
+                      value={waterglassMaxFilter}
+                      onChange={(e) => setWaterglassMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("steps", e)}>
+                  Steps Taken
+                  <div>
+                    <Form.Control
+                      placeholder="Min"
+                      value={stepsMinFilter}
+                      onChange={(e) => setStepsMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      placeholder="Max"
+                      value={stepsMaxFilter}
+                      onChange={(e) => setStepsMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("dailycal", e)}>
+                  Caloric Intake
+                  <div>
+                    <Form.Control
+                      placeholder="Min"
+                      value={dailycalMinFilter}
+                      onChange={(e) => setDailycalMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      placeholder="Max"
+                      value={dailycalMaxFilter}
+                      onChange={(e) => setDailycalMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("hale", e)}>
+                  hale
+                  <div>
+                    <Form.Control
+                      placeholder="Min"
+                      value={haleMinFilter}
+                      onChange={(e) => setHaleMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      placeholder="Max"
+                      value={haleMaxFilter}
+                      onChange={(e) => setHaleMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
+                <th onClick={(e) => handleSort("phd", e)}>
+                  phd
+                  <div>
+                    <Form.Control
+                      placeholder="Min"
+                      value={phdMinFilter}
+                      onChange={(e) => setPhdMinFilter(e.target.value)}
+                    />
+                    <Form.Control
+                      placeholder="Max"
+                      value={phdMaxFilter}
+                      onChange={(e) => setPhdMaxFilter(e.target.value)}
+                    />
+                  </div>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody style={{ backgroundColor: "black" }}>
+              {intakesTable.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`User ID: ${item.uid}`)}
+                    >
+                      <div>{item.uid}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Date: ${item.date}`)}
+                    >
+                      <div>{item.date}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(
+                        `Hours of sleep: ${item.sleephrs}`
+                      )}
+                    >
+                      <div>{item.sleephrs}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(
+                        `Glasses of water: ${item.waterglass}`
+                      )}
+                    >
+                      <div>{item.waterglass}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`Steps taken: ${item.steps}`)}
+                    >
+                      <div>{item.steps}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(
+                        `Caloric Intake: ${item.dailycal}`
+                      )}
+                    >
+                      <div>{item.dailycal}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`hale points: ${item.hale}`)}
+                    >
+                      <div>{item.hale}</div>
+                    </OverlayTrigger>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={renderTooltip(`phd points: ${item.phd}`)}
+                    >
+                      <div>{item.phd}</div>
+                    </OverlayTrigger>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </div>
     </div>
   );

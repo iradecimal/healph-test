@@ -58,7 +58,10 @@ const LeaderboardsTable = ({ data }) => {
                   <OverlayTrigger
                     placement="top"
                     overlay={renderTooltip(
-                      `Name: ${item.Name.first} ${item.Name.middle} ${item.Name.last}`
+                      `Name: ${item.user.map(
+                        (userData) =>
+                          `${userData.fname} ${userData.mi} ${userData.lname} ${userData.suffix}`
+                      )}`
                     )}
                   >
                     <div>
@@ -75,7 +78,10 @@ const LeaderboardsTable = ({ data }) => {
                               : "inherit",
                         }}
                       >
-                        {item.Name.first} {item.Name.middle} {item.Name.last}
+                        {item.user.map(
+                          (userData) =>
+                            `${userData.fname} ${userData.mi} ${userData.lname} ${userData.suffix}`
+                        )}
                       </span>
                     </div>
                   </OverlayTrigger>
@@ -83,7 +89,7 @@ const LeaderboardsTable = ({ data }) => {
                 <td>
                   <OverlayTrigger
                     placement="top"
-                    overlay={renderTooltip(`HALE: ${item.HALE}`)}
+                    overlay={renderTooltip(`HALE: ${item.hale}`)}
                   >
                     <div>
                       <span
@@ -99,7 +105,7 @@ const LeaderboardsTable = ({ data }) => {
                               : "inherit",
                         }}
                       >
-                        {item.HALE}
+                        {item.hale}
                       </span>
                     </div>
                   </OverlayTrigger>
