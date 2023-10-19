@@ -1,7 +1,7 @@
 import { Form, Button, Card, InputGroup } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./loginform.css";
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ const LoginForm = () => {
     event.preventDefault();
     try {
       await axios
-        .post("http://localhost:3000/users/login", {
+        .post(`${process.env.REACT_APP_BACKEND}/users/login`, {
           email: email,
           password: password,
         })
@@ -32,7 +32,7 @@ const LoginForm = () => {
     try {
       await axios
         .post(
-          "http://localhost:3000/admins/login",
+          `${process.env.REACT_APP_BACKEND}/admins/login`,
           {
             email: email,
             password: password,

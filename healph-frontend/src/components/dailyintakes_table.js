@@ -98,7 +98,7 @@ const DailyIntakeTable = () => {
 
       axios
         .get(
-          `http://localhost:3000/dashboard/intakes/${page}/${limit}?${sortParam}&${filtersParam}`
+          `${process.env.REACT_APP_BACKEND}/dashboard/intakes/${page}/${limit}?${sortParam}&${filtersParam}`
         )
         .then((response) => {
           setIntakesTable(response.data.docs);

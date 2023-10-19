@@ -70,7 +70,7 @@ const ReportsTable = () => {
 
       axios
         .get(
-          `http://localhost:3000/dashboard/reports/${page}/${limit}?${queryParams}`
+          `${process.env.REACT_APP_BACKEND}/dashboard/reports/${page}/${limit}?${queryParams}`
         )
         .then((response) => {
           console.log(response.data);

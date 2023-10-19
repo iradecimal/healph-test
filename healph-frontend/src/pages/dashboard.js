@@ -32,7 +32,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Fetch data for mealStats
     axios
-      .get(`http://localhost:3000/dashboard/dailystats/meal`)
+      .get(`${process.env.REACT_APP_BACKEND}/dashboard/dailystats/meal`)
       .then((response) => {
         setMealStats(response.data);
         setLoadingMealStats(false);
@@ -44,7 +44,7 @@ const Dashboard = () => {
 
     // Fetch data for intakeStats
     axios
-      .get(`http://localhost:3000/dashboard/dailystats/intake`)
+      .get(`${process.env.REACT_APP_BACKEND}/dashboard/dailystats/intake`)
       .then((response) => {
         setIntakeStats(response.data);
         setLoadingIntakeStats(false);
@@ -56,7 +56,7 @@ const Dashboard = () => {
 
     // Fetch data for leaderboards
     axios
-      .get(`http://localhost:3000/dashboard/rankings/daily`)
+      .get(`${process.env.REACT_APP_BACKEND}/dashboard/rankings/daily`)
       .then((response) => {
         setLeaderboards(response.data);
         setLoadingLeaderboards(false);
@@ -68,7 +68,7 @@ const Dashboard = () => {
 
     // Fetch data for user count
     axios
-      .get(`http://localhost:3000/dashboard/users/1/1`)
+      .get(`${process.env.REACT_APP_BACKEND}/dashboard/users/1/1`)
       .then((response) => {
         setUserCount(response.data.totalDocs);
         setLoadingUserCount(false);
@@ -85,14 +85,14 @@ const Dashboard = () => {
     // Define API URLs based on the selected interval
     let intakeApiUrl, mealApiUrl;
     if (interval === "daily") {
-      intakeApiUrl = "http://localhost:3000/dashboard/dailystats/intake";
-      mealApiUrl = "http://localhost:3000/dashboard/dailystats/meal";
+      intakeApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/dailystats/intake`;
+      mealApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/dailystats/meal`;
     } else if (interval === "weekly") {
-      intakeApiUrl = "http://localhost:3000/dashboard/weeklystats/intake";
-      mealApiUrl = "http://localhost:3000/dashboard/weeklystats/meal";
+      intakeApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/weeklystats/intake`;
+      mealApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/weeklystats/meal`;
     } else if (interval === "monthly") {
-      intakeApiUrl = "http://localhost:3000/dashboard/monthlystats/intake";
-      mealApiUrl = "http://localhost:3000/dashboard/monthlystats/meal";
+      intakeApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/monthlystats/intake`;
+      mealApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/monthlystats/meal`;
     }
 
     // Fetch data for mealStats
@@ -122,11 +122,11 @@ const Dashboard = () => {
     // Define API URL for leaderboards based on the selected interval
     let leaderboardApiUrl;
     if (interval === "daily") {
-      leaderboardApiUrl = "http://localhost:3000/dashboard/rankings/daily";
+      leaderboardApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/rankings/daily`;
     } else if (interval === "weekly") {
-      leaderboardApiUrl = "http://localhost:3000/dashboard/rankings/weekly";
+      leaderboardApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/rankings/weekly`;
     } else if (interval === "monthly") {
-      leaderboardApiUrl = "http://localhost:3000/dashboard/rankings/monthly";
+      leaderboardApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/rankings/monthly`;
     }
 
     axios

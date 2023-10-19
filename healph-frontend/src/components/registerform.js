@@ -20,7 +20,7 @@ const RegisterForm = () => {
     event.preventDefault();
     
     try{
-      await axios.post("http://localhost:3000/admins/signup",{
+      await axios.post(`${process.env.REACT_APP_BACKEND}/admins/signup`,{
         username: "placeholder",
         email: email,
         firstName: firstname,

@@ -104,7 +104,7 @@ const MealViewerTable = () => {
 
       axios
         .get(
-          `http://localhost:3000/dashboard/meals/${page}/${limit}?${queryParams}`
+          `https://healph.com/healph-back/dashboard/meals/${page}/${limit}?${queryParams}`
         )
         .then((response) => {
           console.log(response.data);
