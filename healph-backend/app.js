@@ -40,6 +40,12 @@ app.use(
     credentials: true, // Enable credentials (cookies, HTTP credentials)
   })
 );
+//fixing CORS cross-origin docker error
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); 
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.use(logger("dev"));
 app.use(express.json());
