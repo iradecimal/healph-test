@@ -10,6 +10,21 @@ const createToken = (id) => {
     });
   };
 
+
+exports.checkUnique = asyncHandler(async (req, res, next) => {
+    const checkUname = await User.exists({uname: req.body.username});
+    const checkEmail = await User.exists({email: req.body.email});
+    let uniqueUname = true;
+    let uniqueEmail = true;
+    if (checkUname){
+        uniqueUname = false;
+    }
+    if (checkEmail){
+        uniqueEmail = false;
+    }
+    res.send({"unique-email": uniqueEmail, "unique-username": uniqueUname});
+});
+
 exports.signup = asyncHandler(async (req, res, next) => {
     const newUser = new User({
         email: req.body.email,
@@ -38,7 +53,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     try{
         console.log(newUser);
         await newUser.save();
-        const token = createToken(user._id);
+        const token = createToken(newUser._id);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(201).json({uid: newUser._id});
     } catch(err) {
