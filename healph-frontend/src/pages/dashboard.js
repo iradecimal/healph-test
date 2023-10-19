@@ -12,8 +12,21 @@ import {
   FaTrashCan,
   FaPeopleGroup,
   FaBreadSlice,
+  FaWeightScale,
 } from "react-icons/fa6";
-import { GiHealthIncrease, GiChickenLeg, GiMeat } from "react-icons/gi";
+import {
+  GiHealthIncrease,
+  GiChickenLeg,
+  GiMeat,
+  GiAges,
+  GiWeightScale,
+  GiHealthCapsule,
+  GiMeal,
+  GiBodyHeight,
+} from "react-icons/gi";
+import { PiGenderIntersexBold } from "react-icons/pi";
+
+import { Chart } from "react-google-charts";
 import axios from "axios";
 
 const Dashboard = () => {
@@ -28,6 +41,100 @@ const Dashboard = () => {
   const [loadingIntakeStats, setLoadingIntakeStats] = useState(true);
   const [loadingLeaderboards, setLoadingLeaderboards] = useState(true);
   const [loadingUserCount, setLoadingUserCount] = useState(true);
+
+  //DUMMY DATA
+  const SexData = [
+    ["Sex", "Count"],
+    ["Male", 40],
+    ["Female", 60],
+  ];
+
+  const ageData = [
+    ["Age Group", "Percentage"],
+    ["17-18", 30],
+    ["19-20", 25],
+    ["21-22", 20],
+    ["23-24", 15],
+    ["25", 10],
+  ];
+
+  const healthConditionData = [
+    ["Health Condition", "Percentage"],
+    ["Diabetes", 40],
+    ["Cardiovascular Diseases", 15],
+    ["Hypertension", 25],
+    ["Cancer", 0],
+    ["Stroke", 0],
+    ["Kidney Disorders", 20],
+  ];
+
+  const dailyPhdData = [
+    ["Day of the Week", "PhD Value"],
+    ["Sunday", 2.3],
+    ["Monday", 2.1],
+    ["Tuesday", 1.5],
+    ["Wednesday", 1.8],
+    ["Thursday", 1.6],
+  ];
+
+  const weeklyPhdData = [
+    ["Week Start Date", "Average PhD Value"],
+    ["2023-10-01", 1.5],
+    ["2023-10-08", 2.5],
+    ["2023-10-15", 2.1],
+    ["2023-10-22", 1.6],
+  ];
+
+  const monthlyPhdData = [
+    ["Month", "Average PhD Value"],
+    ["August", 2.4],
+    ["September", 1.3],
+    ["October", 1.75],
+  ];
+
+  const dailyMealData = [
+    ["Food Type", "Percentage"],
+    ["Water", 10],
+    ["Combo Main", 20],
+    ["Combo Dessert", 5],
+    ["Combo Appetizer", 5],
+    ["Combo Soup", 5],
+    ["Fruit & Vegetables", 15],
+    ["Carbohydrates", 15],
+    ["Dairy", 5],
+    ["Animal-Sourced Protein", 10],
+    ["Plant-Sourced Protein", 10],
+    ["Sugar", 5],
+    ["Fat", 5],
+  ];
+
+  const dailyHaleData = [
+    ["Day of the Week", "HALE Value"],
+    ["Sunday", 1.6],
+    ["Monday", 1.5],
+    ["Tuesday", 1.8],
+    ["Wednesday", 1.7],
+    ["Thursday", 1.6],
+  ];
+
+  const weeklyHaleData = [
+    ["Week Start Date", "Average HALE Value"],
+    ["2023-10-01", 1.65],
+    ["2023-10-08", 1.7],
+    ["2023-10-15", 1.68],
+    ["2023-10-22", 1.67],
+  ];
+
+  const monthlyHaleData = [
+    ["Month", "Average HALE Value"],
+    ["August", 1.7],
+    ["September", 1.68],
+    ["October", 1.69],
+  ];
+
+  const [PhdData, setPhdData] = useState(dailyPhdData);
+  const [hAxisTitle, setHAxisTitle] = useState("Day");
+  const [HaleData, setHaleData] = useState(dailyHaleData);
 
   useEffect(() => {
     // Fetch data for mealStats
@@ -87,12 +194,21 @@ const Dashboard = () => {
     if (interval === "daily") {
       intakeApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/dailystats/intake`;
       mealApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/dailystats/meal`;
+      setPhdData(dailyPhdData);
+      setHaleData(dailyHaleData);
+      setHAxisTitle("Day");
     } else if (interval === "weekly") {
       intakeApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/weeklystats/intake`;
       mealApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/weeklystats/meal`;
+      setPhdData(weeklyPhdData);
+      setHaleData(weeklyHaleData);
+      setHAxisTitle("Date");
     } else if (interval === "monthly") {
       intakeApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/monthlystats/intake`;
       mealApiUrl = `${process.env.REACT_APP_BACKEND}/dashboard/monthlystats/meal`;
+      setPhdData(monthlyPhdData);
+      setHaleData(monthlyHaleData);
+      setHAxisTitle("Month");
     }
 
     // Fetch data for mealStats
@@ -190,13 +306,104 @@ const Dashboard = () => {
                   >
                     Users
                   </h5>
-                  <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
-                    <AvgCard
-                      icon={<FaPeopleGroup />}
-                      label="Number of Users"
-                      value={userCount}
-                    />
-                  </Col>
+                  <Row>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaPeopleGroup />}
+                        label="Number of Users"
+                        value={userCount}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<FaWeightScale />}
+                        label="Avg. BMI"
+                        value={"19"}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<GiBodyHeight />}
+                        label="Avg. Height"
+                        value={"170 cm"}
+                      />
+                    </Col>
+                    <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<GiWeightScale />}
+                        label="Avg. Weight"
+                        value={"62 kg"}
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6} sm={12} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<GiAges />}
+                        label="Age Distribution"
+                        value={
+                          <Chart
+                            width={"100%"}
+                            height={"300px"}
+                            chartType="ColumnChart"
+                            loader={
+                              <Spinner
+                                animation="border"
+                                role="status"
+                                style={{ color: "#9FC856" }}
+                              />
+                            }
+                            data={ageData}
+                          />
+                        }
+                      />
+                    </Col>
+
+                    <Col md={6} sm={12} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<PiGenderIntersexBold />}
+                        label="Sex Distribution"
+                        value={
+                          <Chart
+                            width={"100%"}
+                            height={"300px"}
+                            chartType="PieChart"
+                            loader={
+                              <Spinner
+                                animation="border"
+                                role="status"
+                                style={{ color: "#9FC856" }}
+                              />
+                            }
+                            data={SexData}
+                          />
+                        }
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6} sm={12} style={{ marginBottom: "20px" }}>
+                      <AvgCard
+                        icon={<GiHealthCapsule />}
+                        label="Percentage Distribution of Health Conditions"
+                        value={
+                          <Chart
+                            width={"100%"}
+                            height={"300px"}
+                            chartType="PieChart"
+                            loader={
+                              <Spinner
+                                animation="border"
+                                role="status"
+                                style={{ color: "#9FC856" }}
+                              />
+                            }
+                            data={healthConditionData}
+                          />
+                        }
+                      />
+                    </Col>
+                  </Row>
                 </>
               )}
 
@@ -280,28 +487,28 @@ const Dashboard = () => {
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<GiMeat />}
-                        label="Fats"
+                        label=" Avg.Fats"
                         value={stat.fat.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaBreadSlice />}
-                        label="Carbohydrates"
+                        label="Avg. Carbohydrates"
                         value={stat.carbs.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<GiChickenLeg />}
-                        label="Proteins"
+                        label="Avg. Proteins"
                         value={stat.proteins.toFixed(2)}
                       />
                     </Col>
                     <Col md={3} sm={6} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<FaHamburger />}
-                        label="Calories"
+                        label="Avg. Calories"
                         value={stat.cal.toFixed(2)}
                       />
                     </Col>
@@ -316,6 +523,85 @@ const Dashboard = () => {
                 ))}
               </>
             )}
+
+            <Row>
+              <Col md={6} sm={12} style={{ marginBottom: "20px" }}>
+                <AvgCard
+                  icon={<FaPlateWheat />}
+                  label="PHD Values"
+                  value={
+                    <Chart
+                      width={"100%"}
+                      height={"300px"}
+                      chartType="LineChart"
+                      loader={
+                        <Spinner
+                          animation="border"
+                          role="status"
+                          style={{ color: "#9FC856" }}
+                        />
+                      }
+                      data={PhdData}
+                      options={{
+                        hAxis: { title: hAxisTitle },
+                        vAxis: { title: "PhD Average" },
+                      }}
+                    />
+                  }
+                />
+              </Col>
+
+              <Col md={6} sm={12} style={{ marginBottom: "20px" }}>
+                <AvgCard
+                  icon={<GiHealthIncrease />}
+                  label="HALE Values"
+                  value={
+                    <Chart
+                      width={"100%"}
+                      height={"300px"}
+                      chartType="LineChart"
+                      loader={
+                        <Spinner
+                          animation="border"
+                          role="status"
+                          style={{ color: "#9FC856" }}
+                        />
+                      }
+                      data={HaleData}
+                      options={{
+                        hAxis: { title: hAxisTitle },
+                        vAxis: { title: "HALE Average" },
+                      }}
+                    />
+                  }
+                />
+              </Col>
+            </Row>
+            <Row>
+              {overviewInterval === "daily" && (
+                <Col md={6} sm={12} style={{ marginBottom: "20px" }}>
+                  <AvgCard
+                    icon={<GiMeal />}
+                    label="Daily Meal Composition"
+                    value={
+                      <Chart
+                        width={"100%"}
+                        height={"300px"}
+                        chartType="PieChart"
+                        loader={
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{ color: "#9FC856" }}
+                          />
+                        }
+                        data={dailyMealData}
+                      />
+                    }
+                  />
+                </Col>
+              )}
+            </Row>
 
             <div>
               <h4
