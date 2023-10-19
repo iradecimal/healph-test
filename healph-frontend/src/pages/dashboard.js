@@ -362,7 +362,7 @@ const Dashboard = () => {
                     <Col md={6} sm={12} style={{ marginBottom: "20px" }}>
                       <AvgCard
                         icon={<PiGenderIntersexBold />}
-                        label="Sex Distribution"
+                        label="Sex Ratio"
                         value={
                           <Chart
                             width={"100%"}
@@ -390,7 +390,7 @@ const Dashboard = () => {
                           <Chart
                             width={"100%"}
                             height={"300px"}
-                            chartType="PieChart"
+                            chartType="BarChart"
                             loader={
                               <Spinner
                                 animation="border"
@@ -399,6 +399,9 @@ const Dashboard = () => {
                               />
                             }
                             data={healthConditionData}
+                            options={{
+                              isStacked: true,
+                            }}
                           />
                         }
                       />

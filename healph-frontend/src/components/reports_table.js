@@ -141,7 +141,15 @@ const ReportsTable = () => {
             style={{ color: "#9FC856" }}
           />
         ) : (
-          <Table striped bordered hover style={{ borderColor: "#9FC856" }}>
+          <Table
+            striped
+            bordered
+            hover
+            style={{
+              borderColor: "#9FC856",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+          >
             <thead>
               <tr>
                 <th onClick={(e) => handleSort("_id", e)}>

@@ -7,6 +7,7 @@ const AvgCard = ({ icon, label, value }) => (
       marginBottom: "10px",
       height: "100%",
       borderColor: "#9FC856",
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
     }}
   >
     <Card.Body>

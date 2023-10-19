@@ -32,7 +32,10 @@ const Sidebar = () => {
 
   return (
     <div>
-      <Nav className="sidebar col-md-2 flex-column d-none d-md-block">
+      <Nav
+        className="sidebar col-md-2 flex-column d-none d-md-block"
+        style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
+      >
         <Image
           src="HEALPH.png"
           alt="Sidebar Logo"

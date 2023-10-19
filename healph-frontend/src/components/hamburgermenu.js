@@ -8,7 +8,11 @@ import "./hamburgermenu.css";
 const HamburgerMenu = () => {
   const location = useLocation();
   return (
-    <Navbar expand="md" className="d-block d-md-none">
+    <Navbar
+      expand="md"
+      className="d-block d-md-none"
+      style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
+    >
       <div
         style={{
           display: "flex",

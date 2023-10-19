@@ -8,7 +8,10 @@ const ItemsPagination = ({ currentPage, totalPages, onPageChange }) => {
       <div style={{ paddingTop: "6px", paddingRight: "10px" }}>
         Page {currentPage} - {totalPages}
       </div>
-      <Pagination className="pagination">
+      <Pagination
+        className="pagination"
+        style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
+      >
         <Pagination.First
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
