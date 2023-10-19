@@ -10,6 +10,21 @@ const createToken = (id) => {
     });
   };
 
+
+exports.checkUnique = asyncHandler(async (req, res, next) => {
+    const checkUname = await User.exists({uname: req.body.username});
+    const checkEmail = await User.exists({email: req.body.email});
+    let uniqueUname = true;
+    let uniqueEmail = true;
+    if (checkUname){
+        uniqueUname = false;
+    }
+    if (checkEmail){
+        uniqueEmail = false;
+    }
+    res.send({"unique-email": uniqueEmail, "unique-username": uniqueUname});
+});
+
 exports.signup = asyncHandler(async (req, res, next) => {
     const newUser = new User({
         email: req.body.email,
