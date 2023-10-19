@@ -53,7 +53,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     try{
         console.log(newUser);
         await newUser.save();
-        const token = createToken(user._id);
+        const token = createToken(newUser._id);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(201).json({uid: newUser._id});
     } catch(err) {
