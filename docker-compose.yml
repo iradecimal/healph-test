@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  frontend:
+    build:
+      context: ./healph-frontend/
+      dockerfile: ./Dockerfile
+    container_name: healph-frontend
+    image: node:18-alpine
+    stdin_open: true
+    #restart: always
+    ports: 
+      - "5000:5000"
+    working_dir: /healph-frontend/
+    entrypoint: ["npm", "start"]
+    networks:
+      - healph-net
+  #
+  backend:
+    build:
+      context: ./healph-backend/
+      dockerfile: ./Dockerfile
+    container_name: healph-backend
+    image: node:16.20.0-alpine
+    #restart: always
+    ports:
+      - "3000:3000"
+    working_dir: /healph-backend/
+    entrypoint: ["npm", "start"]
+    networks:
+      - healph-net
+#connecting each container
+networks:
+  healph-net:
+    driver: bridge
+
+
+#docker-compose build
+#docker-compose up
