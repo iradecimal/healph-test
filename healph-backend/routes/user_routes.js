@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
     },
     filename: function(req, file, cb){
         console.log(file);
-        cb(null, f);
+        cb(null, file.originalname);
     }
 })
 
@@ -21,7 +21,7 @@ router.get("/unique", UserController.checkUnique);
 router.post("/signup", UserController.signup);
 router.post("/login", UserController.login);
 router.get("/logout", Auth.userAuth, UserController.logout);
-router.post("/upload-pic/", Auth.userAuth,  upload.single("image"), function (req, res){
+router.post("/upload-pic", Auth.userAuth,  upload.single("image"), function (req, res){
     console.log(req.file);
     res.send("Single File upload success");
 });
