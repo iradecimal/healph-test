@@ -130,7 +130,7 @@ exports.getProfilePicture = asyncHandler(async (req, res, next) => {
         root: path.join(__dirname, '../profpics')
     };
     console.log('/profpics/' + req.params.uid + ".jpg");
-    res.status(200).sendFile( "1" + ".jpg", options);
+    res.status(200).sendFile( req.params.uid + ".jpg", options);
 });
 
 exports.getUserAge = asyncHandler(async (req, res, next) => {
