@@ -16,7 +16,7 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
     });
     await newMeal.save()
             .then(() => {
-                res.status(201).json(newMeal);
+                res.status(201).json({id: newMeal._id});
             })
             .catch((error) => {
                 res.status(400).send("Adding meal was unsuccessful");

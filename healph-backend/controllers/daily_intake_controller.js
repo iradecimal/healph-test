@@ -20,7 +20,7 @@ exports.newDailyIntake = asyncHandler(async (req, res, next) => {
 
     await newIntake.save()
         .then(() => {
-            res.status(201).json(newIntake);
+            res.status(201).json({id: newIntake._id});
         })
         .catch((err) => {
             res.status(400);
