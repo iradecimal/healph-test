@@ -10,7 +10,7 @@ const userRouter = require("./routes/user_routes.js");
 const intakeRouter = require("./routes/daily_intake_routes.js");
 const mealRouter = require("./routes/meal_routes.js");
 const reportRouter = require("./routes/report_routes.js");
-const indexRouter = require("./routes/index");
+const installRouter = require("./routes/install_routes.js");
 const rankingRouter = require("./routes/ranking_routes.js");
 const adminRouter = require("./routes/admin_routes.js");
 const dashboardRouter = require("./routes/dashboard_routes.js");
@@ -47,7 +47,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
+app.use("/", installRouter);
 app.use("/users", userRouter);
 app.use("/intakes", intakeRouter);
 app.use("/meals", mealRouter);
