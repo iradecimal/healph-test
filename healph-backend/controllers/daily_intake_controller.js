@@ -59,11 +59,10 @@ exports.viewDailyIntake = asyncHandler(async (req, res, next) => {
     const intakeMeals = await Meal.find({ dailyid: intake._id }).exec();
     
     if (intake === null) {
-        console.log(err);
         res.status(404).send("Intake was not found");
     }
 
-    res.status(201).json({intake: intake, meals: intakeMeals});
+    res.status(200).json({intake: intake, meals: intakeMeals});
     
 });
 
@@ -91,5 +90,19 @@ exports.getPHD = asyncHandler(async (req, res, next) => {
     const phd = intake.phd;
 
     res.status(200).json({phd: phd});
+
+});
+
+exports.getAllIntakes = asyncHandler(async (req, res, next) => {
+    const intakes = await Intake.find({ uid: req.params.uid}).select(
+        "date sleephrs waterglass dailycal steps phd hale").exec();
+    
+    if (intakes === null) {
+        console.log(err);
+        res.status(404).send("Intake was not found");
+    }
+
+
+    res.status(200).json(intakes);
 
 });
