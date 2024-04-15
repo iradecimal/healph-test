@@ -93,3 +93,17 @@ exports.getPHD = asyncHandler(async (req, res, next) => {
     res.status(200).json({phd: phd});
 
 });
+
+exports.getAllIntakes = asyncHandler(async (req, res, next) => {
+    const intakes = await Intake.find({ uid: req.params.uid}).select(
+        "date sleephrs waterglass dailycal steps phd hale").exec();
+    
+    if (intakes === null) {
+        console.log(err);
+        res.status(404).send("Intake was not found");
+    }
+
+
+    res.status(200).json(intakes);
+
+});

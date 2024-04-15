@@ -8,6 +8,7 @@ router.post("/new/:uid", Auth.userAuth, IntakeController.newDailyIntake);
 router.get("/view/:uid/:date", Auth.userAuth, IntakeController.viewDailyIntake);
 router.get("/get-hale/:uid/:date", Auth.userAuth, IntakeController.getHALE);
 router.get("/get-phd/:uid/:date", Auth.userAuth, IntakeController.getPHD);
+router.get("/getall/:uid", Auth.userAuth, IntakeController.getAllIntakes);
 
 /*
 router.post("/new/:uid", IntakeController.newDailyIntake);

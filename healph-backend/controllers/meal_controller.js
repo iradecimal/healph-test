@@ -36,6 +36,18 @@ exports.getMeal = asyncHandler(async (req, res, next) => {
     res.status(201).json(meal);
 });
 
+exports.getAllMeals = asyncHandler(async (req, res, next) => {
+    const meals = await Meal.find({uid: req.params.uid}).select(
+        'datetime cal fat carbs proteins waste mealdesc foodgroups').exec();
+    console.log(meals)
+    if (meals === null) {
+        console.log(err)
+        res.status(404).send("Meals cannot be found");
+    }
+
+    res.status(200).json(meals);
+});
+
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
     console.log(req.body, req.files)
 });

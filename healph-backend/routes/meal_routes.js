@@ -20,6 +20,7 @@ const upload = multer({ storage: storage });
 
 router.post("/new", Auth.userAuth, MealController.newMeal);
 router.get("/get/:oid", Auth.userAuth, MealController.getMeal);
+router.get("/getall/:uid", Auth.userAuth, MealController.getAllMeals);
 router.post("/upload/:oid", Auth.userAuth, upload.single("image"), function (req, res){
     console.log(req.file);
     res.send("Single File upload success");
