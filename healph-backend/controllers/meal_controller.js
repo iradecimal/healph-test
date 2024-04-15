@@ -16,7 +16,7 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
     });
     await newMeal.save()
             .then(() => {
-                res.status(201).json(newMeal);
+                res.status(201).json({id: newMeal._id});
             })
             .catch((error) => {
                 res.status(400).send("Adding meal was unsuccessful");
@@ -33,7 +33,19 @@ exports.getMeal = asyncHandler(async (req, res, next) => {
         res.status(404).send("Meal cannot be found");
     }
 
-    res.status(201).json(meal);
+    res.status(200).json(meal);
+});
+
+exports.getAllMeals = asyncHandler(async (req, res, next) => {
+    const meals = await Meal.find({uid: req.params.uid}).select(
+        'datetime cal fat carbs proteins waste mealdesc foodgroups').exec();
+    console.log(meals)
+    if (meals === null) {
+        console.log(err)
+        res.status(404).send("Meals cannot be found");
+    }
+
+    res.status(200).json(meals);
 });
 
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
