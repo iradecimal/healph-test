@@ -23,6 +23,8 @@ const userSchema = new Schema({
   joindate: { type: Date, default: Date.now },
   illnesses: { type: [String] },
   allergies: { type: [String] },
+  diet: {type: String},
+  lifestyle: {type: String},
   weight: { type: Number, min: 0 },
   height: { type: Number, min: 0 }
 });
@@ -91,4 +93,4 @@ const Student = Event.discriminator('StudentUser',
   })
 );
 
-module.exports = (User, EmpUser, Student);
+module.exports = {User, EmpUser, Student};
