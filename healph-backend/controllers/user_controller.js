@@ -150,7 +150,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
             weight: user.weight,
             height: user.height
         });
-    } else if (user.__t == "EmpUser") {
+    } else if (user.__t == "StudentUser") {
         res.status(200).json({
             uname: user.uname,
             name: user.name,
