@@ -3,7 +3,7 @@ const Mealname = require('../models/daily_intake.js');
 require('mongoose').Promise = global.Promise
 
 
-exports.GetMealName = asyncHandler(async (req, res, next) => {
+exports.getMealName = asyncHandler(async (req, res, next) => {
     const foodgroups = await Mealname.findOne({ name: req.params.name}).select("foodgroups").exec();
     
     if (foodgroups === null) {
@@ -13,7 +13,7 @@ exports.GetMealName = asyncHandler(async (req, res, next) => {
     res.status(200).json({foodgroups: foodgroups});
 })
 
-exports.NewMealName = asyncHandler(async (req, res, next) => {
+exports.newMealName = asyncHandler(async (req, res, next) => {
     const newMealName = new Mealname({
         name: req.params.name,
         foodgroups: req.params.foodgroups
@@ -28,7 +28,7 @@ exports.NewMealName = asyncHandler(async (req, res, next) => {
         });
 })
 
-exports.GetMealNameTable = asyncHandler(async (req, res, next) => {
+exports.getMealNameTable = asyncHandler(async (req, res, next) => {
     const foodgroups = await Mealname.find().select();
 
     res.status(200).send(foodgroups);
