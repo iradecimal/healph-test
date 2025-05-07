@@ -12,8 +12,8 @@ const createToken = (id) => {
 
 
 exports.checkUnique = asyncHandler(async (req, res, next) => {
-    const checkUname = await user.User.exists({uname: req.body.username});
-    const checkEmail = await user.User.exists({email: req.body.email});
+    const checkUname = await User.exists({uname: req.body.username});
+    const checkEmail = await User.exists({email: req.body.email});
     let uniqueUname = true;
     let uniqueEmail = true;
     if (checkUname){
@@ -26,7 +26,7 @@ exports.checkUnique = asyncHandler(async (req, res, next) => {
 });
 
 exports.signupEmployee = asyncHandler(async (req, res, next) => {
-    const newEmp = new user.EmpUser({
+    const newEmp = new EmpUser({
         email: req.body.email,
         pass: req.body.password,
         uname: req.body.username,
@@ -45,9 +45,10 @@ exports.signupEmployee = asyncHandler(async (req, res, next) => {
         empnum: req.body.empnum,
         college: req.body.college,
         unit: req.body.unit,
-        deg: req.body.degree,
         illnesses: req.body.illnesses,
         allergies: req.body.allergies,
+        diet: req.body.diet,
+        lifestyle: req.body.lifestyle, 
         weight: req.body.weight,
         height: req.body.height
     });
@@ -69,7 +70,7 @@ exports.signupEmployee = asyncHandler(async (req, res, next) => {
 });
 
 exports.signupStudent = asyncHandler(async (req, res, next) => {
-    const newStudent = new user.Student({
+    const newStudent = new Student({
         email: req.body.email,
         pass: req.body.password,
         uname: req.body.username,
@@ -90,6 +91,8 @@ exports.signupStudent = asyncHandler(async (req, res, next) => {
         deg: req.body.degree,
         illnesses: req.body.illnesses,
         allergies: req.body.allergies,
+        diet: req.body.diet,
+        lifestyle: req.body.lifestyle, 
         weight: req.body.weight,
         height: req.body.height
     });

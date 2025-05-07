@@ -23,8 +23,8 @@ const userSchema = new Schema({
   joindate: { type: Date, default: Date.now },
   illnesses: { type: [String] },
   allergies: { type: [String] },
-  diet: {type: String},
-  lifestyle: {type: String},
+  diet: { type: String },
+  lifestyle: { type: String },
   weight: { type: Number, min: 0 },
   height: { type: Number, min: 0 }
 });
@@ -77,18 +77,18 @@ userSchema.statics.login = async function(email, password) {
 
 userSchema.plugin(mongoosePaginate);
 
-const User = mongoose.model('User', eventSchema);
+const User = mongoose.model('User', userSchema);
 
-const EmpUser = Event.discriminator('EmpUser', 
+const EmpUser = User.discriminator('EmpUser', 
   new mongoose.Schema({ 
     empnum: { type: Number },
     unit: { type: String }
   })
 );
 
-const Student = Event.discriminator('StudentUser', 
+const Student = User.discriminator('StudentUser', 
   new mongoose.Schema({ 
-    empnum: { type: Number },
+    studentnum: { type: Number },
     deg: { type: String }
   })
 );
