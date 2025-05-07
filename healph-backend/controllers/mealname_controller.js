@@ -28,3 +28,8 @@ exports.NewMealName = asyncHandler(async (req, res, next) => {
         });
 })
 
+exports.GetMealNameTable = asyncHandler(async (req, res, next) => {
+    const foodgroups = await Mealname.find().select();
+
+    res.status(200).send(foodgroups);
+})
