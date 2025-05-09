@@ -4,27 +4,50 @@ const Meal = require('../models/meal.js');
 require('mongoose').Promise = global.Promise
 
 //create a new empty intake
+//find existing intake and update daily intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
-    const newDate = new Date(req.body.date);
-    console.log(newDate.getTimezoneOffset());
-    const newIntake = new Intake({
-        uid: req.params.uid, 
-        date: req.body.date,
-        sleephrs: req.body.hoursOfSleep,
-        waterglass: req.body.glassesOfWater,
-        dailycal: req.body.dailyCalories,
-        steps: req.body.stepsTaken,
-        phd: req.body.phd,
-        hale: req.body.hale,
-    });
-
-    await newIntake.save()
-        .then(() => {
-            res.status(201).json(newIntake);
-        })
-        .catch((err) => {
-            res.status(400);
+    const intake = await Intake.findOneAndUpdate(
+        { uid: req.params.uid, date: req.params.date },
+        {
+            $set: {
+            sleephrs: req.body.hoursOfSleep,
+            waterglass: req.body.glassesOfWater,
+            dailycal: req.body.dailyCalories,
+            steps: req.body.stepsTaken,
+            phd: req.body.phd,
+            hale: req.body.hale,
+            submit: true
+            }
+        }, {new: true}
+        ).exec();
+        await intake.save;
+    
+    if (!intake) {
+        const newDate = new Date(req.body.date);
+        console.log(newDate.getTimezoneOffset());
+        const newIntake = new Intake({
+            uid: req.params.uid, 
+            date: req.body.date,
+            sleephrs: req.body.hoursOfSleep,
+            waterglass: req.body.glassesOfWater,
+            dailycal: req.body.dailyCalories,
+            steps: req.body.stepsTaken,
+            phd: req.body.phd,
+            hale: req.body.hale
         });
+
+        await newIntake.save()
+            .then(() => {
+                res.status(201).json({id: intake._id});
+            })
+            .catch((err) => {
+                res.status(400);
+            });
+    } else {
+        res.status(200).json({id: intake._id});
+    }
+
+    
 });
 
 // exports.updateDailyIntake = asyncHandler(async (req, res, next) => {

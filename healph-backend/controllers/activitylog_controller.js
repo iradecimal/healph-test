@@ -20,5 +20,6 @@ exports.newLog = asyncHandler(async (req, res, next) => {
             });
 });
 
+
 //function to return all logs for a specific day instead
 //or just let mongoose paginate handle it LMAO

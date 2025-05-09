@@ -18,7 +18,7 @@ exports.newMeal = asyncHandler(async (req, res, next) => {
     });
     await newMeal.save()
             .then(() => {
-                res.status(201).json(newMeal);
+                res.status(201).json(newMeal); // send _id nalang
             })
             .catch((error) => {
                 res.status(400).send("Adding meal was unsuccessful");
@@ -53,3 +53,5 @@ exports.getAllMeals = asyncHandler(async (req, res, next) => {
 exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
     console.log(req.body, req.files)
 });
+
+//uploadMealBounds
