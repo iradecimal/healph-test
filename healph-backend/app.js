@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const compression = require("compression");
 const cors = require("cors");
+const rfs = require("rotating-file-stream");
 
 const userRouter = require("./routes/user_routes.js");
 const intakeRouter = require("./routes/daily_intake_routes.js");
@@ -26,6 +27,12 @@ const dev_db_url =
   "mongodb+srv://testadmin:MaDFhk14d6RNVcjo@cluster0.9fuqzsp.mongodb.net/healph";
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 
+
+var accessLogStream = rfs.createStream('access.log', {
+  interval: '1d', // rotate daily
+  path: path.join(__dirname, 'log')
+})
+
 main().catch((err) => console.log(err));
 async function main() {
   await mongoose.connect(mongoDB);
@@ -42,7 +49,7 @@ app.use(
   })
 );
 
-app.use(logger("dev"));
+app.use(logger("combined", {stream: accessLogStream}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
