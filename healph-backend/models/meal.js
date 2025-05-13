@@ -12,9 +12,11 @@ const mealSchema = new Schema({
   fat: { type: Number, min: 0 },
   carbs: { type: Number, min: 0 },
   proteins: { type: Number, min: 0 },
+  sodium: {type: Number, min: 0},
   waste: {type: Number, min: 0},
   mealdesc: { type: String },
-  foodgroups: { type : [String]  }
+  mealname: {type: String },
+  foodgroups: { type : [String] }
 })
 
 mealSchema.plugin(mongoosePaginate);

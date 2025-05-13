@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const User = require('../models/user.js');
+const {User, EmpUser, Student} = require('../models/user.js');
 const path = require("node:path");
 const jwt = require('jsonwebtoken');
 
@@ -25,8 +25,8 @@ exports.checkUnique = asyncHandler(async (req, res, next) => {
     res.send({"unique-email": uniqueEmail, "unique-username": uniqueUname});
 });
 
-exports.signup = asyncHandler(async (req, res, next) => {
-    const newUser = new User({
+exports.signupEmployee = asyncHandler(async (req, res, next) => {
+    const newEmp = new EmpUser({
         email: req.body.email,
         pass: req.body.password,
         uname: req.body.username,
@@ -42,20 +42,67 @@ exports.signup = asyncHandler(async (req, res, next) => {
             region: req.body.region,
             town: req.body.town
         },   
-        uni: req.body.university,
-        deg: req.body.degree,
+        empnum: req.body.empnum,
+        college: req.body.college,
+        unit: req.body.unit,
         illnesses: req.body.illnesses,
         allergies: req.body.allergies,
+        diet: req.body.diet,
+        lifestyle: req.body.lifestyle, 
         weight: req.body.weight,
         height: req.body.height
     });
 
     try{
-        console.log(newUser);
-        await newUser.save();
-        const token = createToken(newUser._id);
+        console.log(newEmp);
+        await newEmp.save();
+        const token = createToken(newEmp._id);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.status(201).json({uid: newUser._id});
+        res.status(201).json({uid: newEmp._id});
+    } catch(err) {
+        console.log(err)
+        if (err.code === 11000){
+            res.status(400).json({ error: "Username/Email has already been used"});
+        } else {
+            res.status(400).json(err); 
+        }  
+    }
+});
+
+exports.signupStudent = asyncHandler(async (req, res, next) => {
+    const newStudent = new Student({
+        email: req.body.email,
+        pass: req.body.password,
+        uname: req.body.username,
+        name: {
+            fname: req.body.firstName,
+            lname: req.body.lastName,
+            mi: req.body.middleInitial,
+            suffix: req.body.suffix
+        },
+        sex: req.body.sex,
+        bday: req.body.birthday,
+        loc:{
+            region: req.body.region,
+            town: req.body.town
+        },   
+        studentnum: req.body.studentnum,
+        college: req.body.college,
+        deg: req.body.degree,
+        illnesses: req.body.illnesses,
+        allergies: req.body.allergies,
+        diet: req.body.diet,
+        lifestyle: req.body.lifestyle, 
+        weight: req.body.weight,
+        height: req.body.height
+    });
+
+    try{
+        console.log(newStudent);
+        await newStudent.save();
+        const token = createToken(newStudent._id);
+        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(201).json({uid: newStudent._id});
     } catch(err) {
         console.log(err)
         if (err.code === 11000){
@@ -84,28 +131,51 @@ exports.logout = asyncHandler(async (req, res, next) => {
 });
 
 exports.getUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.params.uid).select(
-    'uname name sex bday loc uni deg joindate illnesses allergies weight height').exec();
+    const user = await User.findById(req.params.uid).exec();
+
+    if (user.__t == "EmpUser") {
+        res.status(200).json({
+            uname: user.uname,
+            name: user.name,
+            sex: user.sex,
+            bday: user.bday,
+            empnum: user.empnum,
+            college: user.college,
+            unit: user.unit,
+            joindate: user.joindate,
+            illnesses: user.illnesses,
+            allergies: user.allergies,
+            diet: user.diet,
+            lifestyle: user.lifestyle,
+            weight: user.weight,
+            height: user.height
+        });
+    } else if (user.__t == "StudentUser") {
+        res.status(200).json({
+            uname: user.uname,
+            name: user.name,
+            sex: user.sex,
+            bday: user.bday,
+            loc: user.uname,
+            studentnum: user.studentnum,
+            college: user.college,
+            deg: user.deg,
+            joindate: user.joindate,
+            illnesses: user.illnesses,
+            allergies: user.allergies,
+            diet: user.diet,
+            lifestyle: user.lifestyle,
+            weight: user.weight,
+            height: user.height
+        });
+    }
 
     if (user === null) {
         res.status(404).send("User cannot be found");
     }
     
 
-    res.status(200).json({
-        uname: user.uname,
-        name: user.name,
-        sex: user.sex,
-        bday: user.bday,
-        loc: user.uname,
-        uni: user.uni,
-        deg: user.deg,
-        joindate: user.joindate,
-        illnesses: user.illnesses,
-        allergies: user.allergies,
-        weight: user.weight,
-        height: user.height
-    });
+    
 });
 
 exports.getFullName = asyncHandler(async (req, res, next) => {

@@ -19,11 +19,12 @@ const userSchema = new Schema({
   sex: {type: String, required: true},
   bday: { type: String, required: true, minLength: 9 ,maxLength: 11 },
   loc: { region: String, town: String },
-  uni: { type: String, required: true },
-  deg: { type: String, required: true },
+  college: { type: String },
   joindate: { type: Date, default: Date.now },
   illnesses: { type: [String] },
   allergies: { type: [String] },
+  diet: { type: String },
+  lifestyle: { type: String },
   weight: { type: Number, min: 0 },
   height: { type: Number, min: 0 }
 });
@@ -76,4 +77,20 @@ userSchema.statics.login = async function(email, password) {
 
 userSchema.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
+
+const EmpUser = User.discriminator('EmpUser', 
+  new mongoose.Schema({ 
+    empnum: { type: Number },
+    unit: { type: String }
+  })
+);
+
+const Student = User.discriminator('StudentUser', 
+  new mongoose.Schema({ 
+    studentnum: { type: Number },
+    deg: { type: String }
+  })
+);
+
+module.exports = {User, EmpUser, Student};

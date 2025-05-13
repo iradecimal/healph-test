@@ -10,7 +10,6 @@ const daily_intakeSchema = new Schema({
   waterglass: { type: Number, min: 0, required: true },
   dailycal: { type: Number, min: 0, required: true },
   steps: { type: Number, min: 0, required: true },
-  phd: { type: Number, min: 0, required: true },
   hale: { type: Number, min: 0, required: true },
 });
 
