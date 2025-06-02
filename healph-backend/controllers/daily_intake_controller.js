@@ -5,18 +5,41 @@ require('mongoose').Promise = global.Promise
 
 //create a new empty intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
-    const newDate = new Date(req.body.date);
-    console.log(newDate.getTimezoneOffset());
-    const newIntake = new Intake({
-        uid: req.params.uid, 
-        date: req.body.date,
-        sleephrs: req.body.hoursOfSleep,
-        waterglass: req.body.glassesOfWater,
-        dailycal: req.body.dailyCalories,
-        steps: req.body.stepsTaken,
-        phd: req.body.phd,
-        hale: req.body.hale,
-    });
+    const intake = await Intake.findOneAndUpdate(
+        { uid: req.params.uid, date: req.params.date },
+        {
+            $set: {
+            sleephrs: req.body.hoursOfSleep,
+            waterglass: req.body.glassesOfWater,
+            dailycal: req.body.dailyCalories,
+            steps: req.body.stepsTaken,
+            phd: req.body.phd,
+            hale: req.body.hale,
+            submit: true
+            }
+        }, {new: true}
+        ).exec();
+        await intake.save()
+        .then(() => {
+            res.status(201).json(intake);
+        })
+        .catch((err) => {
+            res.status(400);
+        });
+    
+    if (!intake) {
+        const newDate = new Date(req.body.date);
+        console.log(newDate.getTimezoneOffset());
+        const newIntake = new Intake({
+            uid: req.params.uid, 
+            date: req.body.date,
+            sleephrs: req.body.hoursOfSleep,
+            waterglass: req.body.glassesOfWater,
+            dailycal: req.body.dailyCalories,
+            steps: req.body.stepsTaken,
+            phd: req.body.phd,
+            hale: req.body.hale
+        });
 
     await newIntake.save()
         .then(() => {
