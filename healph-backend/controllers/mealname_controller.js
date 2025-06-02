@@ -16,7 +16,7 @@ exports.getMealName = asyncHandler(async (req, res, next) => {
 exports.newMealName = asyncHandler(async (req, res, next) => {
     const newMealName = new Mealname({
         name: req.params.name,
-        foodgroups: req.params.foodgroups
+        foodgroups: req.body.foodgroups
     });
 
     await newMealName.save()
