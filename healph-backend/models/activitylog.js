@@ -13,3 +13,5 @@ const activitylogSchema = new Schema({
 activitylogSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("ActivityLog", activitylogSchema);
+
+//backend-side or client-side activity log

@@ -4,6 +4,7 @@ const Meal = require('../models/meal.js');
 require('mongoose').Promise = global.Promise
 
 //create a new empty intake
+//find existing intake and update daily intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
     const intake = await Intake.findOneAndUpdate(
         { uid: req.params.uid, date: req.params.date },
