@@ -48,6 +48,8 @@ exports.getAllMeals = asyncHandler(async (req, res, next) => {
     res.status(200).json(meals);
 });
 
-exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
-    console.log(req.body, req.files)
-});
+
+// deprecated function
+// exports.uploadMealPicture = asyncHandler(async (req, res, next) => {
+//     console.log(req.body, req.files)
+// });

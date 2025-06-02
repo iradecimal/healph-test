@@ -48,6 +48,7 @@ exports.newDailyIntake = asyncHandler(async (req, res, next) => {
         .catch((err) => {
             res.status(400);
         });
+    }
 });
 
 // exports.updateDailyIntake = asyncHandler(async (req, res, next) => {
