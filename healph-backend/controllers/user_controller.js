@@ -226,19 +226,61 @@ exports.updateMetrics = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateBio = asyncHandler(async (req, res, next) => {
-    const user = await User.findByIdAndUpdate(req.params.uid, {
-        $set: {
-            fname: req.body.firstName,
-            lname: req.body.lastName,
-            mi: req.body.middleInitial,
-            suffix: req.body.suffix,
-            sex: req.body.sex,
-            location: req.body.location,
-            uni: req.body.uni,
-            degree: req.body.degree
-        }
-    }, {new: true} );
-    res.status(200).send("Success");
+    const user = await User.findById(req.params.uid).exec();
+
+    if (user.__t == "EmpUser") {
+        await EmpUser.findByIdAndUpdate(req.params.uid, {
+            $set: {
+                name: {
+                    fname: req.body.firstName,
+                    lname: req.body.lastName,
+                    mi: req.body.middleInitial,
+                    suffix: req.body.suffix
+                },
+                sex: req.body.sex,
+                bday: req.body.birthday,
+                loc:{
+                    region: req.body.region,
+                    town: req.body.town
+                },   
+                empnum: req.body.empnum,
+                college: req.body.college,
+                unit: req.body.unit,
+                illnesses: req.body.illnesses,
+                allergies: req.body.allergies,
+                diet: req.body.diet,
+                lifestyle: req.body.lifestyle,
+            }
+        })
+    } else if (user.__t == "StudentUser") {
+        await Student.findByIdAndUpdate(req.params.uid, {
+            $set: {
+                name: {
+                    fname: req.body.firstName,
+                    lname: req.body.lastName,
+                    mi: req.body.middleInitial,
+                    suffix: req.body.suffix
+                },
+                sex: req.body.sex,
+                bday: req.body.birthday,
+                loc:{
+                    region: req.body.region,
+                    town: req.body.town
+                },   
+                studentnum: req.body.studentnum,
+                college: req.body.college,
+                deg: req.body.degree,
+                illnesses: req.body.illnesses,
+                allergies: req.body.allergies,
+                diet: req.body.diet,
+                lifestyle: req.body.lifestyle 
+                    }
+        })
+    }
+
+    if (user === null) {
+        res.status(404).send("User cannot be found");
+    }    
 });
 
 exports.uploadPicture = asyncHandler(async (req, res, next) => {
