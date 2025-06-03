@@ -2,31 +2,33 @@ const asyncHandler = require('express-async-handler');
 const Intake = require('../models/daily_intake.js');
 const Meal = require('../models/meal.js');
 require('mongoose').Promise = global.Promise
+const mongoose = require('mongoose')
 
 //create a new empty intake
 //find existing intake and update daily intake
 exports.newDailyIntake = asyncHandler(async (req, res, next) => {
     const intake = await Intake.findOneAndUpdate(
-        { uid: req.params.uid, date: req.params.date },
+        { uid: req.params.uid, date: req.body.date },
         {
             $set: {
             sleephrs: req.body.hoursOfSleep,
             waterglass: req.body.glassesOfWater,
             dailycal: req.body.dailyCalories,
             steps: req.body.stepsTaken,
-            phd: req.body.phd,
             hale: req.body.hale,
             submit: true
             }
-        }, {new: true}
-        ).exec();
-        await intake.save()
-        .then(() => {
-            res.status(201).json(intake);
-        })
-        .catch((err) => {
-            res.status(400);
-        });
+        }, {new: false}
+        )
+        if (intake) {
+            await intake.save().then(() => {
+                res.status(201).json(intake);
+            })
+            .catch((err) => {
+                res.status(400);
+            });
+        }
+        
     
     if (!intake) {
         const newDate = new Date(req.body.date);
